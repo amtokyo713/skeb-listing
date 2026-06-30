@@ -34,6 +34,9 @@ header{padding:18px 16px 8px;border-bottom:1px solid var(--line);position:sticky
 .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:10px}
 .card.prime{border-color:var(--acc2);box-shadow:0 0 0 1px rgba(224,177,90,.25) inset}
 .c-head{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.exbtn{flex:none;font-size:11px;color:var(--mut);background:transparent;border:1px solid var(--line);
+  border-radius:8px;padding:4px 8px;cursor:pointer;white-space:nowrap}
+.exbtn:hover{color:var(--warn);border-color:var(--warn)}
 .c-name{font-weight:600;font-size:15px;line-height:1.3}
 .c-handle{color:var(--mut);font-size:12px;text-decoration:none}
 .c-handle:hover{color:var(--acc)}
@@ -72,6 +75,29 @@ footer{color:var(--mut);font-size:11px;text-align:center;padding:18px}
 #gate button{margin-top:12px;width:100%;background:var(--acc);color:#1c150a;border:none;border-radius:10px;padding:11px;font-weight:700;font-size:14px;cursor:pointer}
 #gate .err{color:var(--warn);font-size:12px;margin-top:10px;min-height:16px}
 .hidden{display:none!important}
+/* help */
+.help-btn{margin-left:auto;font-size:12px;color:var(--acc);background:transparent;border:1px solid var(--acc2);border-radius:8px;padding:6px 11px;cursor:pointer;align-self:center}
+.help-btn:hover{background:rgba(224,177,90,.1)}
+#help{position:fixed;inset:0;background:rgba(0,0,0,.66);z-index:60;padding:16px;overflow-y:auto;display:flex}
+#help .hbox{background:var(--panel);border:1px solid var(--line);border-radius:16px;max-width:580px;width:100%;margin:auto;padding:24px 22px}
+#help h2{margin:0;font-size:18px;display:flex;align-items:center;justify-content:space-between}
+#help h3{color:var(--acc);font-size:13px;margin:18px 0 6px;border-bottom:1px solid var(--line);padding-bottom:5px;letter-spacing:.03em}
+#help p,#help li{font-size:13px;color:var(--mut);line-height:1.75;margin:4px 0}
+#help b{color:var(--txt)}
+#help .pill{color:#1c150a;background:var(--acc);border-radius:999px;padding:1px 8px;font-size:11px;font-weight:700}
+#help ul{margin:4px 0;padding-left:20px}
+#help .hclose{font-size:13px;color:var(--mut);background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:5px 12px;cursor:pointer}
+#help .hclose:hover{color:var(--txt);border-color:var(--acc)}
+#help .step{display:flex;gap:8px;margin:5px 0}
+#help .step .n{flex:none;width:20px;height:20px;border-radius:50%;background:var(--acc);color:#1c150a;font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center}
+/* exclude bar */
+#exbar{margin:6px 16px 0;padding:8px 12px;background:var(--panel);border:1px solid var(--warn);
+  border-radius:10px;font-size:12px;color:var(--mut);display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+#exbar b{color:var(--txt)}
+#exbar button{font-size:12px;background:var(--panel2);color:var(--txt);border:1px solid var(--line);
+  border-radius:8px;padding:5px 10px;cursor:pointer}
+#exbar button:hover{border-color:var(--acc);color:var(--acc)}
+#exbar code{background:var(--panel2);padding:2px 6px;border-radius:5px;font-size:11px;color:var(--acc)}
 </style>
 </head>
 <body>
@@ -85,10 +111,50 @@ footer{color:var(--mut);font-size:11px;text-align:center;padding:18px}
   </div>
 </div>
 
+<div id="help" class="hidden">
+  <div class="hbox">
+    <h2>このサイトの使い方 <button class="hclose" id="help-close">閉じる ✕</button></h2>
+    <p>「<b>いま募集中 × 予算が合う × VTuber を描ける</b>」絵師を探す社内ツールです。</p>
+
+    <h3>並び順「おすすめ順」の基準</h3>
+    <p>「今すぐ頼める × VTuber を描ける」絵師を上に出します。</p>
+    <div class="step"><span class="n">1</span><span><b>主対象（◎）を最優先</b> ＝「募集中」かつ「イラスト」かつ「VTuber適性が <b>確実 / 有力</b>」の絵師（カードが金枠）。</span></div>
+    <div class="step"><span class="n">2</span><span>次に<b>受付状況</b>：募集中 → 受付不明 → 休止中。</span></div>
+    <div class="step"><span class="n">3</span><span>同じなら<b>VTuber適性スコアの高い順</b>。</span></div>
+
+    <h3>VTuber適性ランクの意味</h3>
+    <ul>
+      <li><span class="pill">確実</span> 名鑑の特定 VTuber 名にヒット（実績が確認できた）</li>
+      <li><span class="pill">有力</span> プロフィールに「VTuber / Live2D / 立ち絵 / キャラデザ」等の語</li>
+      <li><span class="pill">候補</span> 弱い手がかりのみ</li>
+    </ul>
+    <p>※「○○」の緑タグは、その絵師が描いた可能性の高い VTuber 名です。</p>
+
+    <h3>絞り込み</h3>
+    <ul>
+      <li><b>募集中のみ</b>：いまリクエスト受付中だけ表示（既定）</li>
+      <li><b>価格</b>：イラスト最低額の帯で絞る</li>
+      <li><b>VTuber適性</b>：上のランクで絞る</li>
+      <li><b>R-18も表示</b>：オフで成人向けを隠す（既定オフ）</li>
+      <li><b>要目視も表示</b>：価格・受付・ジャンルが不明な絵師を含めるか</li>
+      <li>上の検索枠は<b>名前・@handle・描いた VTuber 名</b>で絞れます</li>
+    </ul>
+
+    <h3>🚫 除外（合わない絵師を弾く）</h3>
+    <p>カード右上の <b>🚫除外</b> を押すと、その絵師は<b>この端末で今すぐ非表示</b>になります。
+    上に出る「<b>コレクションに反映</b>」のコマンドを巡回PCで実行すると、<b>今後も収集しません</b>。</p>
+
+    <h3>作品サムネ・発注</h3>
+    <p>カードの作品画像はクリックで Skeb の作品ページへ（画像は Skeb の参照表示）。
+    発注は「<b>Skebで開く</b>」から正規フローで。<b>社内専用</b>のため URL・パスワードの共有は控えてください。</p>
+  </div>
+</div>
+
 <header class="hidden" id="hdr">
   <div class="brand">
     <h1>skeb<span class="acc">-finder</span></h1>
     <span class="sub">いま募集中 × 予算 × VTuber を描ける絵師（社内）</span>
+    <button class="help-btn" id="help-open">❓ 使い方</button>
   </div>
   <div class="bar">
     <input id="q" type="search" placeholder="名前 / @handle / 描いたVTuberで検索" />
@@ -117,12 +183,41 @@ footer{color:var(--mut);font-size:11px;text-align:center;padding:18px}
   </div>
 </header>
 <div class="count hidden" id="count"></div>
+<div id="exbar" class="hidden"></div>
 <div class="grid hidden" id="grid"></div>
-<footer class="hidden" id="ftr">ビルド: 2026-06-30T21:56:45 ／ 収録 164 名 ／ 個人利用・社内非公開 ／ 画像は Skeb CDN 参照（再ホストなし）</footer>
+<footer class="hidden" id="ftr">ビルド: 2026-07-01T01:21:08 ／ 収録 172 名 ／ 個人利用・社内非公開 ／ 画像は Skeb CDN 参照（再ホストなし）</footer>
 
 <script>
 const ITER = 600000;
 let ALL = [];
+
+// ---- 除外（localStorage で端末ローカル即時非表示 ＋ コレクション反映コマンド）----
+function loadExcluded(){ try{ return new Set(JSON.parse(localStorage.getItem("skeb_excluded")||"[]")); }catch(e){ return new Set(); } }
+function saveExcluded(s){ localStorage.setItem("skeb_excluded", JSON.stringify([...s])); }
+let EXCLUDED = loadExcluded();
+function excludeHandle(h){
+  EXCLUDED.add(String(h).toLowerCase());
+  saveExcluded(EXCLUDED);
+  render(); updateExbar();
+}
+function unexcludeAll(){
+  if(!confirm("端末の除外リストを全解除しますか？（コレクション側の除外は exclude.py で管理）")) return;
+  EXCLUDED = new Set(); saveExcluded(EXCLUDED); render(); updateExbar();
+}
+async function copyExcludeCmd(){
+  const cmd = "python exclude.py add " + [...EXCLUDED].join(" ");
+  try{ await navigator.clipboard.writeText(cmd); alert("コピーしました:\n" + cmd); }
+  catch(e){ prompt("このコマンドをコピーして実行してください:", cmd); }
+}
+function updateExbar(){
+  const bar = document.getElementById("exbar");
+  if(!EXCLUDED.size){ bar.classList.add("hidden"); return; }
+  bar.classList.remove("hidden");
+  bar.innerHTML = `🚫 除外中 <b>${EXCLUDED.size}</b> 名（この端末で非表示）`
+    + ` <button onclick="copyExcludeCmd()">コレクションに反映（コマンドをコピー）</button>`
+    + ` <button onclick="unexcludeAll()">全解除</button>`
+    + ` <span>※「反映」したコマンドを巡回PCで実行すると今後も収集しません</span>`;
+}
 
 // ---- 復号（crypto.py と対：PBKDF2-SHA256/AES-256-GCM/gzip）----
 function b64(s){ return Uint8Array.from(atob(s), c => c.charCodeAt(0)); }
@@ -151,11 +246,12 @@ async function loadAndRender(password){
   ["hdr","count","grid","ftr"].forEach(id => document.getElementById(id).classList.remove("hidden"));
   bindControls();
   render();
+  updateExbar();
 }
 
 // ---- フィルタ / 描画 ----
 const ACC_LABEL = {accepting:"募集中", stopped:"休止中", unknown:"受付不明"};
-const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
 function filtered(){
   const q = document.getElementById("q").value.trim().toLowerCase();
@@ -165,6 +261,7 @@ function filtered(){
   const nsfwOk = document.getElementById("f-nsfw").checked;
   const revOk = document.getElementById("f-rev").checked;
   let r = ALL.filter(c => {
+    if (EXCLUDED.has(String(c.handle).toLowerCase())) return false;  // 端末ローカル除外
     if (acc !== "all" && c.accepting !== acc) return false;
     if (price && c.price_band !== price) return false;
     if (tier && c.vtuber_tier !== tier) return false;
@@ -221,6 +318,7 @@ function card(c, nsfwShown){
         <div class="c-name">${esc(c.name)}</div>
         <a class="c-handle" href="${esc(c.url)}" target="_blank" rel="noopener noreferrer">@${esc(c.handle)}</a>
       </div>
+      <button class="exbtn" onclick="excludeHandle('${esc(c.handle)}')" title="この絵師を一覧から外し、今後も収集しない">🚫 除外</button>
     </div>
     <div class="badges">${badges.join("")}</div>
     ${hits?`<div class="hits">${hits}</div>`:""}
@@ -260,6 +358,13 @@ async function tryUnlock(pw){
 }
 document.getElementById("unlock").addEventListener("click", () => tryUnlock(document.getElementById("pw").value));
 document.getElementById("pw").addEventListener("keydown", e => { if(e.key==="Enter") tryUnlock(e.target.value); });
+
+// ---- 使い方パネル ----
+function toggleHelp(show){ document.getElementById("help").classList.toggle("hidden", !show); }
+document.getElementById("help-open").addEventListener("click", () => toggleHelp(true));
+document.getElementById("help-close").addEventListener("click", () => toggleHelp(false));
+document.getElementById("help").addEventListener("click", e => { if(e.target.id === "help") toggleHelp(false); });
+document.addEventListener("keydown", e => { if(e.key === "Escape") toggleHelp(false); });
 window.addEventListener("DOMContentLoaded", () => {
   const saved = sessionStorage.getItem("skeb_pw");
   if (saved) tryUnlock(saved);
