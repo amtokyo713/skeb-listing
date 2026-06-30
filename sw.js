@@ -1,0 +1,26 @@
+// skeb-finder service worker (v2)
+const VER = "v2";
+const SHELL = "skeb-shell-" + VER;
+self.addEventListener("install", (e) => { self.skipWaiting(); });
+self.addEventListener("activate", (e) => {
+  e.waitUntil((async () => {
+    const keys = await caches.keys();
+    await Promise.all(keys.filter(k => k.startsWith("skeb-shell-") && k !== SHELL).map(k => caches.delete(k)));
+    await self.clients.claim();
+  })());
+});
+self.addEventListener("fetch", (e) => {
+  const url = new URL(e.request.url);
+  // data.json は常に network-first（鮮度優先）。シェルは stale-while-revalidate。
+  if (url.pathname.endsWith("/data.json")) {
+    e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
+    return;
+  }
+  if (e.request.method !== "GET") return;
+  e.respondWith((async () => {
+    const cache = await caches.open(SHELL);
+    const cached = await cache.match(e.request);
+    const net = fetch(e.request).then(r => { if (r && r.ok) cache.put(e.request, r.clone()); return r; }).catch(() => null);
+    return cached || (await net) || new Response("offline", { status: 503 });
+  })());
+});
