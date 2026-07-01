@@ -1,5 +1,5 @@
-// skeb-finder service worker (v5)
-const VER = "v5";
+// skeb-finder service worker (v6)
+const VER = "v6";
 const SHELL = "skeb-shell-" + VER;
 self.addEventListener("install", (e) => { self.skipWaiting(); });
 self.addEventListener("activate", (e) => {
@@ -11,6 +11,7 @@ self.addEventListener("activate", (e) => {
 });
 self.addEventListener("fetch", (e) => {
   const url = new URL(e.request.url);
+  if (url.origin !== self.location.origin) return;  // 外部(GAS等)はSWを通さない＝共有お気に入りは常に最新
   // data.json は常に network-first（鮮度優先）。シェルは stale-while-revalidate。
   if (url.pathname.endsWith("/data.json")) {
     e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));

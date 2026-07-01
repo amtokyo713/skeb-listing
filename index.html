@@ -34,9 +34,15 @@ header{padding:18px 16px 8px;border-bottom:1px solid var(--line);position:sticky
 .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:10px}
 .card.prime{border-color:var(--acc2);box-shadow:0 0 0 1px rgba(224,177,90,.25) inset}
 .c-head{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.c-actions{display:flex;align-items:center;gap:6px;flex:none}
 .exbtn{flex:none;font-size:11px;color:var(--mut);background:transparent;border:1px solid var(--line);
   border-radius:8px;padding:4px 8px;cursor:pointer;white-space:nowrap}
 .exbtn:hover{color:var(--warn);border-color:var(--warn)}
+.favbtn{flex:none;font-size:12px;line-height:1;color:var(--mut);background:transparent;border:1px solid var(--line);
+  border-radius:8px;padding:4px 8px;cursor:pointer;white-space:nowrap}
+.favbtn:hover{color:var(--acc);border-color:var(--acc)}
+.favbtn.on{color:#1c150a;background:var(--acc);border-color:var(--acc);font-weight:700}
+.favbtn .who{font-size:10px;opacity:.9;margin-left:2px}
 .c-name{font-weight:600;font-size:15px;line-height:1.3}
 .c-handle{color:var(--mut);font-size:12px;text-decoration:none}
 .c-handle:hover{color:var(--acc)}
@@ -98,6 +104,13 @@ footer{color:var(--mut);font-size:11px;text-align:center;padding:18px}
   border-radius:8px;padding:5px 10px;cursor:pointer}
 #exbar button:hover{border-color:var(--acc);color:var(--acc)}
 #exbar code{background:var(--panel2);padding:2px 6px;border-radius:5px;font-size:11px;color:var(--acc)}
+/* favorite bar */
+#favbar{margin:6px 16px 0;padding:8px 12px;background:var(--panel);border:1px solid var(--acc2);
+  border-radius:10px;font-size:12px;color:var(--mut);display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+#favbar b{color:var(--acc)}
+#favbar button{font-size:12px;background:var(--panel2);color:var(--txt);border:1px solid var(--line);
+  border-radius:8px;padding:5px 10px;cursor:pointer}
+#favbar button:hover{border-color:var(--acc);color:var(--acc)}
 </style>
 </head>
 <body>
@@ -137,12 +150,19 @@ footer{color:var(--mut);font-size:11px;text-align:center;padding:18px}
       <li><b>VTuber適性</b>：上のランクで絞る</li>
       <li><b>R-18も表示</b>：オフで成人向けを隠す（既定オフ）</li>
       <li><b>要目視も表示</b>：価格・受付・ジャンルが不明な絵師を含めるか</li>
+      <li><b>⭐自分 / ⭐全員</b>：お気に入りだけに絞る（下記）。絞ると受付・R-18 等の他条件は無視して全お気に入りを表示</li>
       <li>上の検索枠は<b>名前・@handle・描いた VTuber 名</b>で絞れます</li>
     </ul>
 
     <h3>🚫 除外（合わない絵師を弾く）</h3>
     <p>カード右上の <b>🚫除外</b> を押すと、その絵師は<b>この端末で今すぐ非表示</b>になります。
     上に出る「<b>コレクションに反映</b>」のコマンドを巡回PCで実行すると、<b>今後も収集しません</b>。</p>
+
+    <h3>⭐ お気に入り（3〜4人で共有）</h3>
+    <p>カード右上の <b>⭐</b> を押すと、その絵師が<b>チーム全員の共有お気に入り</b>に入り、
+    <b>誰が付けたか</b>（表示名）も出ます。初回だけ表示名を訊きます（端末に保存）。
+    上部バーの「表示名」から変更、絞り込みの <b>⭐自分 / ⭐全員</b> で候補だけに絞れます。
+    ⭐は<b>休止中でも隠れません</b>（候補を見失わないため）。「更新」で最新の共有状態に同期します。</p>
 
     <h3>作品サムネ・発注</h3>
     <p>カードの作品画像はクリックで Skeb の作品ページへ（画像は Skeb の参照表示）。
@@ -171,6 +191,11 @@ footer{color:var(--mut);font-size:11px;text-align:center;padding:18px}
       <option value="有力">有力</option>
       <option value="候補">候補</option>
     </select>
+    <select id="f-fav">
+      <option value="">⭐すべて</option>
+      <option value="mine">⭐自分</option>
+      <option value="all">⭐全員</option>
+    </select>
     <select id="f-sort">
       <option value="reco">おすすめ順</option>
       <option value="price-asc">価格 安い順</option>
@@ -183,9 +208,10 @@ footer{color:var(--mut);font-size:11px;text-align:center;padding:18px}
   </div>
 </header>
 <div class="count hidden" id="count"></div>
+<div id="favbar" class="hidden"></div>
 <div id="exbar" class="hidden"></div>
 <div class="grid hidden" id="grid"></div>
-<footer class="hidden" id="ftr">ビルド: 2026-07-01T20:39:52 ／ 収録 3162 名 ／ 個人利用・社内非公開 ／ 画像は Skeb CDN 参照（再ホストなし）</footer>
+<footer class="hidden" id="ftr">ビルド: 2026-07-01T22:35:22 ／ 収録 3162 名 ／ 個人利用・社内非公開 ／ 画像は Skeb CDN 参照（再ホストなし）</footer>
 
 <script>
 const ITER = 600000;
@@ -219,6 +245,95 @@ function updateExbar(){
     + ` <span>※「反映」したコマンドを巡回PCで実行すると今後も収集しません</span>`;
 }
 
+// ---- お気に入り（⭐ を GAS+Sheet で 3〜4 人共有 / 誰が付けたか属性つき）----
+let FAV = null;                 // {endpoint, secret}（暗号化 payload 由来）。無ければ機能OFF
+let FAVMAP = new Map();         // handle(lower) -> [{uid, name}]
+let ME = loadMe();              // {uid, name}（端末ローカル・uid は端末固有）
+function loadMe(){
+  try{ const m = JSON.parse(localStorage.getItem("skeb_user")||"null"); if(m && m.uid) return m; }catch(e){}
+  const uid = "u" + Math.random().toString(36).slice(2,10) + Date.now().toString(36).slice(-4);
+  const m = {uid, name:""}; localStorage.setItem("skeb_user", JSON.stringify(m)); return m;
+}
+function saveMe(){ localStorage.setItem("skeb_user", JSON.stringify(ME)); }
+function ensureName(){
+  if(ME.name) return true;
+  const n = (prompt("お気に入りに表示するお名前（例：田中）") || "").trim().slice(0,40);
+  if(!n) return false;
+  ME.name = n; saveMe(); return true;
+}
+function favKey(h){ return String(h).toLowerCase().replace(/^@/,""); }
+function favList(h){ return FAVMAP.get(favKey(h)) || []; }
+function iFaved(h){ return favList(h).some(x => x.uid === ME.uid); }
+function setFavCache(list){ try{ localStorage.setItem("skeb_fav_cache", JSON.stringify(list||[])); }catch(e){} }
+function buildFavMap(list){
+  const m = new Map();
+  (list||[]).forEach(r => {
+    const k = favKey(r.handle); if(!m.has(k)) m.set(k, []);
+    m.get(k).push({uid:String(r.uid), name:String(r.name||"")});
+  });
+  FAVMAP = m;
+}
+async function loadFavs(){
+  if(!FAV) return;
+  try{
+    const u = FAV.endpoint + (FAV.endpoint.includes("?")?"&":"?") + "secret=" + encodeURIComponent(FAV.secret);
+    const j = await (await fetch(u, {method:"GET"})).json();
+    if(j && j.ok){ buildFavMap(j.favorites); setFavCache(j.favorites); return; }
+  }catch(e){ /* 取得失敗 → キャッシュへフォールバック */ }
+  try{ buildFavMap(JSON.parse(localStorage.getItem("skeb_fav_cache")||"[]")); }catch(_){}
+}
+async function postFav(action, handle){
+  // GAS は text/plain だとプリフライト無しで叩ける（302→googleusercontent で ACAO:* が付く）。
+  const body = JSON.stringify({secret:FAV.secret, action, handle:favKey(handle), uid:ME.uid, name:ME.name});
+  const j = await (await fetch(FAV.endpoint, {method:"POST",
+    headers:{"Content-Type":"text/plain;charset=utf-8"}, body})).json();
+  if(!j || !j.ok) throw new Error((j && j.error) || "post-failed");
+  buildFavMap(j.favorites); setFavCache(j.favorites);
+}
+async function toggleFav(h){
+  if(!FAV) return;
+  if(!ensureName()) return;                 // 表示名未設定ならキャンセル
+  const key = favKey(h), want = !iFaved(h);
+  const cur = favList(h).slice();           // 楽観更新（先に画面へ反映）
+  if(want) cur.push({uid:ME.uid, name:ME.name});
+  else { const i = cur.findIndex(x=>x.uid===ME.uid); if(i>=0) cur.splice(i,1); }
+  FAVMAP.set(key, cur); render(); updateFavbar();
+  try{ await postFav(want?"add":"remove", h); }
+  catch(e){ alert("お気に入りの同期に失敗しました。時間をおいて再度お試しください。"); await loadFavs(); }
+  render(); updateFavbar();
+}
+async function renameMe(){
+  const n = (prompt("表示名を変更", ME.name) || "").trim().slice(0,40);
+  if(!n || n===ME.name) return;
+  ME.name = n; saveMe();
+  if(FAV){ try{
+    const j = await (await fetch(FAV.endpoint, {method:"POST",
+      headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body:JSON.stringify({secret:FAV.secret, action:"rename", uid:ME.uid, name:ME.name})})).json();
+    if(j && j.ok){ buildFavMap(j.favorites); setFavCache(j.favorites); }
+  }catch(e){} }
+  render(); updateFavbar();
+}
+function favBtnHtml(c){
+  if(!FAV) return "";
+  const list = favList(c.handle), mine = iFaved(c.handle), cnt = list.length;
+  const names = list.map(x=>esc(x.name||"名無し")).join("・");
+  const who = cnt ? ` <span class="who">${cnt}</span>` : "";
+  const title = cnt ? "お気に入り: " + names : "お気に入りに追加";
+  return `<button class="favbtn${mine?" on":""}" onclick="toggleFav('${esc(c.handle)}')" title="${title}">${mine?"⭐":"☆"}${who}</button>`;
+}
+function updateFavbar(){
+  const bar = document.getElementById("favbar");
+  if(!FAV){ bar.classList.add("hidden"); return; }
+  let all = 0, mine = 0;
+  FAVMAP.forEach(list => { if(list.length){ all++; if(list.some(x=>x.uid===ME.uid)) mine++; } });
+  bar.classList.remove("hidden");
+  bar.innerHTML = `⭐ お気に入り 全員 <b>${all}</b> 名・自分 <b>${mine}</b> 名`
+    + ` <button onclick="loadFavsAndRender()">更新</button>`
+    + ` <button onclick="renameMe()">表示名: ${esc(ME.name||"未設定")}</button>`;
+}
+async function loadFavsAndRender(){ await loadFavs(); render(); updateFavbar(); }
+
 // ---- 復号（crypto.py と対：PBKDF2-SHA256/AES-256-GCM/gzip）----
 function b64(s){ return Uint8Array.from(atob(s), c => c.charCodeAt(0)); }
 async function decryptPayload(enc, password){
@@ -237,6 +352,7 @@ async function loadAndRender(password){
   const enc = await (await fetch("./data.json", {cache:"no-store"})).json();
   const data = await decryptPayload(enc, password);
   ALL = data.creators || [];
+  FAV = (data._meta && data._meta.fav) || null;   // ⭐共有の endpoint/secret（無ければ機能OFF）
   // 価格帯セレクトを meta から構築
   const fp = document.getElementById("f-price");
   (data._meta?.price_bands || []).forEach(b => {
@@ -245,8 +361,10 @@ async function loadAndRender(password){
   document.getElementById("gate").classList.add("hidden");
   ["hdr","count","grid","ftr"].forEach(id => document.getElementById(id).classList.remove("hidden"));
   bindControls();
+  if(FAV) await loadFavs();          // 共有お気に入りを取得（属性つき）
   render();
   updateExbar();
+  updateFavbar();
 }
 
 // ---- フィルタ / 描画 ----
@@ -260,13 +378,18 @@ function filtered(){
   const tier = document.getElementById("f-tier").value;
   const nsfwOk = document.getElementById("f-nsfw").checked;
   const revOk = document.getElementById("f-rev").checked;
+  const favMode = FAV ? document.getElementById("f-fav").value : "";
   let r = ALL.filter(c => {
     if (EXCLUDED.has(String(c.handle).toLowerCase())) return false;  // 端末ローカル除外
-    if (acc !== "all" && c.accepting !== acc) return false;
-    if (price && c.price_band !== price) return false;
-    if (tier && c.vtuber_tier !== tier) return false;
-    if (!nsfwOk && c.nsfw) return false;
-    if (!revOk && c.needs_review) return false;
+    if (favMode === "mine" && !iFaved(c.handle)) return false;
+    if (favMode === "all" && favList(c.handle).length === 0) return false;
+    if (!favMode){  // ⭐絞り込み中は受付/価格/適性/R-18/要目視を無視（お気に入りを見失わない）
+      if (acc !== "all" && c.accepting !== acc) return false;
+      if (price && c.price_band !== price) return false;
+      if (tier && c.vtuber_tier !== tier) return false;
+      if (!nsfwOk && c.nsfw) return false;
+      if (!revOk && c.needs_review) return false;
+    }
     if (q){
       const hay = (c.name + " @" + c.handle + " " + (c.vtuber_hits||[]).join(" ")).toLowerCase();
       if (!hay.includes(q)) return false;
@@ -318,7 +441,10 @@ function card(c, nsfwShown){
         <div class="c-name">${esc(c.name)}</div>
         <a class="c-handle" href="${esc(c.url)}" target="_blank" rel="noopener noreferrer">@${esc(c.handle)}</a>
       </div>
-      <button class="exbtn" onclick="excludeHandle('${esc(c.handle)}')" title="この絵師を一覧から外し、今後も収集しない">🚫 除外</button>
+      <div class="c-actions">
+        ${favBtnHtml(c)}
+        <button class="exbtn" onclick="excludeHandle('${esc(c.handle)}')" title="この絵師を一覧から外し、今後も収集しない">🚫 除外</button>
+      </div>
     </div>
     <div class="badges">${badges.join("")}</div>
     ${hits?`<div class="hits">${hits}</div>`:""}
@@ -343,6 +469,11 @@ function bindControls(){
     const el = document.getElementById(id);
     el.addEventListener(el.tagName==="INPUT" && el.type!=="checkbox" ? "input":"change", render);
   });
+  const ff = document.getElementById("f-fav");
+  if(ff){
+    if(!FAV){ ff.style.display = "none"; }        // 共有未設定なら ⭐絞り込みは隠す
+    else { ff.addEventListener("change", loadFavsAndRender); }  // 最新の共有状態へ同期して再描画
+  }
 }
 
 // ---- gate ----
