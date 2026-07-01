@@ -185,7 +185,7 @@ footer{color:var(--mut);font-size:11px;text-align:center;padding:18px}
 <div class="count hidden" id="count"></div>
 <div id="exbar" class="hidden"></div>
 <div class="grid hidden" id="grid"></div>
-<footer class="hidden" id="ftr">ビルド: 2026-07-01T08:47:46 ／ 収録 2955 名 ／ 個人利用・社内非公開 ／ 画像は Skeb CDN 参照（再ホストなし）</footer>
+<footer class="hidden" id="ftr">ビルド: 2026-07-01T09:13:28 ／ 収録 2955 名 ／ 個人利用・社内非公開 ／ 画像は Skeb CDN 参照（再ホストなし）</footer>
 
 <script>
 const ITER = 600000;
@@ -351,8 +351,9 @@ async function tryUnlock(pw){
   err.textContent = "解錠中…";
   try{
     await loadAndRender(pw);
-    sessionStorage.setItem("skeb_pw", pw);
+    localStorage.setItem("skeb_pw", pw);   // 端末に保持＝次回以降は自動解錠（再入力不要）
   }catch(e){
+    localStorage.removeItem("skeb_pw");     // 保存値が無効（PW変更等）なら消して再入力を促す
     err.textContent = "解錠失敗（パスワードを確認）";
   }
 }
@@ -366,7 +367,7 @@ document.getElementById("help-close").addEventListener("click", () => toggleHelp
 document.getElementById("help").addEventListener("click", e => { if(e.target.id === "help") toggleHelp(false); });
 document.addEventListener("keydown", e => { if(e.key === "Escape") toggleHelp(false); });
 window.addEventListener("DOMContentLoaded", () => {
-  const saved = sessionStorage.getItem("skeb_pw");
+  const saved = localStorage.getItem("skeb_pw");
   if (saved) tryUnlock(saved);
   if ("serviceWorker" in navigator) navigator.serviceWorker.register("./sw.js").catch(()=>{});
 });

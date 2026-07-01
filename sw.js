@@ -1,5 +1,5 @@
-// skeb-finder service worker (v4)
-const VER = "v4";
+// skeb-finder service worker (v5)
+const VER = "v5";
 const SHELL = "skeb-shell-" + VER;
 self.addEventListener("install", (e) => { self.skipWaiting(); });
 self.addEventListener("activate", (e) => {
