@@ -211,7 +211,7 @@ footer{color:var(--mut);font-size:11px;text-align:center;padding:18px}
 <div id="favbar" class="hidden"></div>
 <div id="exbar" class="hidden"></div>
 <div class="grid hidden" id="grid"></div>
-<footer class="hidden" id="ftr">ビルド: 2026-07-01T22:35:22 ／ 収録 3162 名 ／ 個人利用・社内非公開 ／ 画像は Skeb CDN 参照（再ホストなし）</footer>
+<footer class="hidden" id="ftr">ビルド: 2026-07-02T05:01:55 ／ 収録 3162 名 ／ 個人利用・社内非公開 ／ 画像は Skeb CDN 参照（再ホストなし）</footer>
 
 <script>
 const ITER = 600000;
@@ -248,18 +248,26 @@ function updateExbar(){
 // ---- お気に入り（⭐ を GAS+Sheet で 3〜4 人共有 / 誰が付けたか属性つき）----
 let FAV = null;                 // {endpoint, secret}（暗号化 payload 由来）。無ければ機能OFF
 let FAVMAP = new Map();         // handle(lower) -> [{uid, name}]
-let ME = loadMe();              // {uid, name}（端末ローカル・uid は端末固有）
+let ME = loadMe();              // {uid, name}（端末ローカル。同じ名前を再入力すれば復元可＝下記 claimIdentity）
 function loadMe(){
   try{ const m = JSON.parse(localStorage.getItem("skeb_user")||"null"); if(m && m.uid) return m; }catch(e){}
-  const uid = "u" + Math.random().toString(36).slice(2,10) + Date.now().toString(36).slice(-4);
-  const m = {uid, name:""}; localStorage.setItem("skeb_user", JSON.stringify(m)); return m;
+  return {uid:"", name:""};      // 未確定（初回 or キャッシュ/クッキー削除直後はここに落ちる）
 }
 function saveMe(){ localStorage.setItem("skeb_user", JSON.stringify(ME)); }
+function newUid(){ return "u" + Math.random().toString(36).slice(2,10) + Date.now().toString(36).slice(-4); }
+function claimIdentity(name){
+  // 共有お気に入りの中に同じ表示名の既存エントリがあれば、その識別子を引き継ぐ。
+  // これにより、キャッシュ/クッキー削除でこの端末の識別子(uid)を失っても、
+  // 以前と同じ名前を再入力すれば元の⭐に自動で復帰できる（uid は端末非依存で名前ベース）。
+  const reuse = [...FAVMAP.values()].flat().find(x => x.name === name);
+  return (reuse ? reuse.uid : ME.uid) || newUid();
+}
 function ensureName(){
-  if(ME.name) return true;
-  const n = (prompt("お気に入りに表示するお名前（例：田中）") || "").trim().slice(0,40);
+  if(ME.name && ME.uid) return true;
+  const n = (prompt("お気に入りに表示するお名前（例：田中）\n※以前と同じ名前を入れると、以前の⭐に自動で復帰します") || "").trim().slice(0,40);
   if(!n) return false;
-  ME.name = n; saveMe(); return true;
+  ME = {uid: claimIdentity(n), name: n}; saveMe();
+  return true;
 }
 function favKey(h){ return String(h).toLowerCase().replace(/^@/,""); }
 function favList(h){ return FAVMAP.get(favKey(h)) || []; }
@@ -292,11 +300,16 @@ async function postFav(action, handle){
 }
 async function toggleFav(h){
   if(!FAV) return;
-  if(!ensureName()) return;                 // 表示名未設定ならキャンセル
-  const key = favKey(h), want = !iFaved(h);
+  const want = !iFaved(h);                  // クリック時点の見た目を反転（復帰処理より前に固定）
+  if(!ensureName()) return;                 // 表示名未設定ならキャンセル（キャッシュ削除後の復帰もここで発生）
+  const key = favKey(h);
   const cur = favList(h).slice();           // 楽観更新（先に画面へ反映）
-  if(want) cur.push({uid:ME.uid, name:ME.name});
-  else { const i = cur.findIndex(x=>x.uid===ME.uid); if(i>=0) cur.splice(i,1); }
+  const already = cur.some(x=>x.uid===ME.uid);
+  // ※ want は復帰前の見た目、already は復帰後の実際の状態。
+  //   キャッシュ削除直後に既に⭐済みの項目を初めてクリックした場合、復帰で already=true と判明しても
+  //   want=true のまま（＝クリック時の意図どおり「付ける」）なので誤って解除しない。
+  if(want && !already) cur.push({uid:ME.uid, name:ME.name});
+  else if(!want && already){ const i = cur.findIndex(x=>x.uid===ME.uid); if(i>=0) cur.splice(i,1); }
   FAVMAP.set(key, cur); render(); updateFavbar();
   try{ await postFav(want?"add":"remove", h); }
   catch(e){ alert("お気に入りの同期に失敗しました。時間をおいて再度お試しください。"); await loadFavs(); }
@@ -305,7 +318,7 @@ async function toggleFav(h){
 async function renameMe(){
   const n = (prompt("表示名を変更", ME.name) || "").trim().slice(0,40);
   if(!n || n===ME.name) return;
-  ME.name = n; saveMe();
+  ME = {uid: ME.uid || claimIdentity(n), name: n}; saveMe();
   if(FAV){ try{
     const j = await (await fetch(FAV.endpoint, {method:"POST",
       headers:{"Content-Type":"text/plain;charset=utf-8"},
