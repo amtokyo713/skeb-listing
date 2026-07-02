@@ -30,9 +30,20 @@ header{padding:18px 16px 8px;border-bottom:1px solid var(--line);position:sticky
 .bar label.chk{display:inline-flex;align-items:center;gap:6px;color:var(--mut);font-size:12px;
   background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:7px 10px}
 .count{color:var(--mut);font-size:12px;margin:10px 16px 0}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;padding:12px 16px 40px}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;padding:12px 16px 40px;max-width:1760px;margin:0 auto}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:10px;
+  content-visibility:auto;contain-intrinsic-size:auto 340px}
 .card.prime{border-color:var(--acc2);box-shadow:0 0 0 1px rgba(224,177,90,.25) inset}
+/* 広画面は列を増やして一覧性を上げる */
+@media(min-width:1440px){.grid{grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}}
+/* コンパクト表示（PC専用）: 作品サムネと理由行を隠し条件スキャンに特化。
+   トグルはPCのみ表示のため、モバイルでは .compact が付いていても適用しない */
+@media(min-width:769px){
+  #grid.compact{grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}
+  #grid.compact .card{padding:10px;gap:8px;contain-intrinsic-size:auto 150px}
+  /* .card 配下に限定（#grid直下の0件メッセージ<div class="reason">を巻き込まない） */
+  #grid.compact .works,#grid.compact .card .reason{display:none}
+}
 .c-head{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
 .c-actions{display:flex;align-items:center;gap:6px;flex:none}
 .exbtn{flex:none;font-size:11px;color:var(--mut);background:transparent;border:1px solid var(--line);
@@ -46,6 +57,7 @@ header{padding:18px 16px 8px;border-bottom:1px solid var(--line);position:sticky
 .c-name{font-weight:600;font-size:15px;line-height:1.3}
 .c-handle{color:var(--mut);font-size:12px;text-decoration:none}
 .c-handle:hover{color:var(--acc)}
+.c-price{color:var(--acc);font-size:13.5px;font-weight:600;margin-top:2px}
 .badges{display:flex;flex-wrap:wrap;gap:6px}
 .b{font-size:11px;padding:3px 8px;border-radius:999px;border:1px solid var(--line);background:var(--chip);color:var(--mut);white-space:nowrap}
 .b.ok{color:#0c1b14;background:var(--ok);border-color:var(--ok);font-weight:600}
@@ -54,10 +66,16 @@ header{padding:18px 16px 8px;border-bottom:1px solid var(--line);position:sticky
 .b.price{color:var(--txt)}
 .b.r18{color:#2a0f0c;background:var(--warn);border-color:var(--warn);font-weight:600}
 .b.rev{border-style:dashed}
-.hits{display:flex;flex-wrap:wrap;gap:5px}
-.hit{font-size:11px;color:var(--acc);background:rgba(224,177,90,.08);border:1px solid rgba(224,177,90,.3);border-radius:6px;padding:2px 7px}
+/* 緑タグは1行固定（カード高を揃え横スキャン可能に）。PCは端をフェード、モバイルは横スクロール */
+.hits{display:flex;flex-wrap:nowrap;gap:5px;overflow:hidden;
+  -webkit-mask-image:linear-gradient(90deg,#000 88%,transparent);mask-image:linear-gradient(90deg,#000 88%,transparent)}
+.hit{flex:0 0 auto;white-space:nowrap;font-size:11px;color:var(--acc);background:rgba(224,177,90,.08);border:1px solid rgba(224,177,90,.3);border-radius:6px;padding:2px 7px;cursor:pointer}
+.hit:hover{background:rgba(224,177,90,.2);border-color:var(--acc)}
 .meta{display:flex;gap:14px;color:var(--mut);font-size:12px;flex-wrap:wrap}
 .works{display:flex;gap:8px;flex-wrap:wrap}
+/* サムネ先頭化: サムネ付き作品ブロックはカード最上部にフルブリード表示（絵が第一判断材料） */
+.works.lead{margin:-14px -14px 0;gap:2px;border-radius:var(--r) var(--r) 0 0;overflow:hidden;flex-wrap:nowrap}
+.works.lead .thumb{flex:1 1 calc(50% - 1px);width:auto;border:none;border-radius:0}
 .thumb{position:relative;display:block;width:calc(50% - 4px);aspect-ratio:4/3;border-radius:10px;overflow:hidden;border:1px solid var(--line);background:var(--panel2)}
 .thumb img{width:100%;height:100%;object-fit:cover;display:block}
 .thumb .tlink{position:absolute;right:6px;bottom:6px;font-size:11px;background:rgba(0,0,0,.62);color:#fff;padding:2px 7px;border-radius:6px}
@@ -68,10 +86,95 @@ header{padding:18px 16px 8px;border-bottom:1px solid var(--line);position:sticky
 .work{font-size:12px;color:var(--mut);text-decoration:none;border:1px solid var(--line);border-radius:8px;padding:4px 9px;background:var(--panel2)}
 .work:hover{border-color:var(--acc);color:var(--acc)}
 .open{margin-top:2px;text-align:center;text-decoration:none;font-weight:600;font-size:13px;
-  color:#1c150a;background:var(--acc);border-radius:10px;padding:9px 12px}
+  color:#1c150a;background:var(--acc);border-radius:10px;padding:9px 12px;border:1px solid var(--acc)}
 .open:hover{background:var(--acc2)}
+/* PCはCTAをゴースト化して金を「主対象」とhoverに絞る（アクセント飽和の解消） */
+@media(min-width:601px){
+  .open{background:transparent;border-color:var(--acc2);color:var(--acc)}
+  .open:hover{background:var(--acc);color:#1c150a}
+  .card.prime .open{background:var(--acc);color:#1c150a}
+  .card.prime .open:hover{background:var(--acc2)}
+}
 .reason{color:var(--mut);font-size:11px}
 footer{color:var(--mut);font-size:11px;text-align:center;padding:18px}
+/* ===== 段階描画（もっと見る） ===== */
+#more-wrap{text-align:center;padding:4px 16px 30px}
+#more-btn{font-size:13px;color:var(--txt);background:var(--panel);border:1px solid var(--line);
+  border-radius:10px;padding:11px 26px;cursor:pointer;min-height:44px}
+#more-btn:hover{border-color:var(--acc);color:var(--acc)}
+/* ===== 上部バー統合（件数・⭐・除外を1行に） ===== */
+.subrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:8px 16px 0}
+.subrow .count{margin:0}
+.subrow #favbar,.subrow #exbar{margin:0;padding:6px 10px}
+/* ===== モバイル最適化 ===== */
+@media(max-width:768px){
+  header{padding:10px 12px 8px}
+  .brand .sub{display:none}
+  .bar{flex-wrap:nowrap;margin-top:8px}
+  .bar select,.bar label.chk{display:none}  /* フィルタ群は⚙シートへ移設 */
+  .bar input[type=search]{font-size:16px;min-height:42px}  /* iOSの強制ズーム防止 */
+  /* ⚙は .bar 前置で詳細度UP（後方の基底 #sheet-open{display:none} に勝つため。CSS詳細度の罠） */
+  .bar #sheet-open{display:inline-flex}
+  .favbtn,.exbtn{min-height:36px;padding:7px 10px;font-size:13px}
+  .c-actions{gap:8px}
+  #favbar button,#exbar button:not(.exundo){display:none}  /* 低頻度ボタンは⚙シート内へ */
+  .subrow{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;margin:6px 12px 0}
+  .subrow>*{flex:0 0 auto}
+  body{padding-bottom:calc(64px + env(safe-area-inset-bottom))}
+  /* タッチ帯(〜768px)は緑タグを横スクロールで全量閲覧・タップ可能に（maskはhover前提のPC専用） */
+  .hits{overflow-x:auto;-webkit-overflow-scrolling:touch;-webkit-mask-image:none;mask-image:none}
+  .hits::-webkit-scrollbar{display:none}
+}
+@media(max-width:560px){
+  .card{padding:10px;gap:7px;contain-intrinsic-size:auto 300px}
+  .works.lead{margin:-10px -10px 0}
+  .b{font-size:10px;padding:2px 6px}
+  .hit{font-size:10px;padding:2px 6px}
+  .meta{gap:10px;font-size:11px}
+  .open{padding:8px 12px}
+  .grid{padding:10px 12px 40px;gap:10px}
+}
+/* ⚙絞り込みボタン（モバイルのみ・PCでは非表示） */
+#sheet-open{display:none;align-items:center;gap:5px;flex:none;font-size:13px;color:var(--txt);
+  background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 12px;cursor:pointer;min-height:42px}
+#sheet-badge:not(:empty){background:var(--acc);color:#1c150a;border-radius:999px;font-size:11px;font-weight:700;
+  padding:1px 7px;margin-left:2px}
+/* ===== 下部固定タブバー（モバイルのみ） ===== */
+.btab{display:none;position:fixed;bottom:0;left:0;right:0;z-index:40;background:var(--panel);
+  border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+@media(max-width:768px){.btab{display:flex}}
+.btab button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 0 7px;
+  font-size:10px;color:var(--mut);background:transparent;border:none;border-top:2px solid transparent;cursor:pointer}
+.btab button .bt-ico{font-size:17px;line-height:1}
+.btab button.on{color:var(--acc);border-top-color:var(--acc)}
+/* ===== 絞り込みボトムシート（モバイル・刀剣listingの実証パターン） ===== */
+body.sheet-open{overflow:hidden}
+.msheet{position:fixed;inset:0;z-index:60}
+.msheet[hidden]{display:none!important}
+.msheet-backdrop{position:absolute;inset:0;background:rgba(4,6,10,.62);opacity:0;transition:opacity .22s ease}
+.msheet.open .msheet-backdrop{opacity:1}
+.msheet-panel{position:absolute;left:0;right:0;bottom:0;max-height:88vh;max-height:88dvh;display:flex;flex-direction:column;
+  background:var(--panel);border:1px solid var(--line);border-bottom:none;border-radius:16px 16px 0 0;
+  box-shadow:0 -14px 44px rgba(0,0,0,.55);transform:translateY(100%);transition:transform .26s cubic-bezier(.32,.72,.33,1)}
+.msheet.open .msheet-panel{transform:none}
+.msheet-head{position:relative;display:flex;align-items:center;gap:10px;padding:18px 16px 9px;border-bottom:1px solid var(--line)}
+.msheet-head b{font-size:14.5px}
+.msheet-grab{position:absolute;top:7px;left:50%;transform:translateX(-50%);width:42px;height:4px;border-radius:2px;background:var(--line)}
+.msheet-x{margin-left:auto;width:34px;height:34px;border-radius:50%;flex:none;border:1px solid var(--line);
+  background:var(--panel2);color:var(--mut);font-size:14px;line-height:1;cursor:pointer}
+.msheet-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:12px 16px}
+#sheet-filters{display:flex;flex-direction:column;gap:10px}
+#sheet-filters select{width:100%;font-size:16px;min-height:44px;background:var(--panel2);border:1px solid var(--line);
+  color:var(--txt);border-radius:10px;padding:8px 10px;display:block}
+/* 移設で基底『.bar label.chk』が外れるため、チップ装飾一式をここで再定義する */
+#sheet-filters label.chk{display:inline-flex;align-items:center;gap:6px;min-height:44px;font-size:14px;
+  color:var(--mut);background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:7px 12px}
+.msheet-tools{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+.msheet-tools button{font-size:13px;color:var(--txt);background:var(--panel2);border:1px solid var(--line);
+  border-radius:10px;padding:10px 12px;cursor:pointer;min-height:44px}
+.msheet-foot{display:flex;gap:10px;padding:10px 14px calc(10px + env(safe-area-inset-bottom));border-top:1px solid var(--line)}
+.msheet-apply{flex:1;min-height:46px;border-radius:10px;border:none;background:var(--acc);color:#1c150a;
+  font-weight:700;font-size:14.5px;cursor:pointer}
 /* gate */
 #gate{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:50;padding:20px}
 #gate .box{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:28px;max-width:340px;width:100%;text-align:center}
@@ -205,13 +308,44 @@ footer{color:var(--mut);font-size:11px;text-align:center;padding:18px}
     </select>
     <label class="chk"><input type="checkbox" id="f-nsfw"> R-18も表示</label>
     <label class="chk"><input type="checkbox" id="f-rev" checked> 要目視も表示</label>
+    <label class="chk"><input type="checkbox" id="f-compact"> コンパクト表示</label>
+    <button id="sheet-open" type="button">⚙ 絞り込み<span id="sheet-badge"></span></button>
   </div>
 </header>
-<div class="count hidden" id="count"></div>
-<div id="favbar" class="hidden"></div>
-<div id="exbar" class="hidden"></div>
+<div class="subrow hidden" id="subrow">
+  <div class="count" id="count"></div>
+  <div id="favbar" class="hidden"></div>
+  <div id="exbar" class="hidden"></div>
+</div>
 <div class="grid hidden" id="grid"></div>
-<footer class="hidden" id="ftr">ビルド: 2026-07-02T06:15:33 ／ 収録 3240 名 ／ 個人利用・社内非公開 ／ 画像は Skeb CDN 参照（再ホストなし）</footer>
+<div id="more-wrap" class="hidden"><button id="more-btn" type="button">もっと見る</button><div id="more-sentinel"></div></div>
+<footer class="hidden" id="ftr">ビルド: 2026-07-02T11:02:17 ／ 収録 3273 名 ／ 個人利用・社内非公開 ／ 画像は Skeb CDN 参照（再ホストなし）</footer>
+
+<nav class="btab hidden" id="btab">
+  <button type="button" data-fav="" class="on"><span class="bt-ico">👥</span><span>すべて</span></button>
+  <button type="button" data-fav="mine"><span class="bt-ico">⭐</span><span>自分</span></button>
+  <button type="button" data-fav="all"><span class="bt-ico">🌟</span><span>全員</span></button>
+  <button type="button" id="btab-sheet"><span class="bt-ico">⚙</span><span>絞り込み</span></button>
+  <button type="button" id="btab-top"><span class="bt-ico">↑</span><span>先頭へ</span></button>
+</nav>
+
+<div class="msheet" id="msheet" hidden>
+  <div class="msheet-backdrop" id="msheet-backdrop"></div>
+  <div class="msheet-panel">
+    <div class="msheet-head"><span class="msheet-grab"></span><b>絞り込み・並び替え</b>
+      <button class="msheet-x" id="msheet-x" type="button">✕</button></div>
+    <div class="msheet-body">
+      <div id="sheet-filters"></div>
+      <div class="msheet-tools">
+        <button type="button" onclick="loadFavsAndRender()">⭐ 更新</button>
+        <button type="button" onclick="renameMe()" id="sheet-name">表示名</button>
+        <button type="button" onclick="copyExcludeCmd()">🚫 コレクションに反映</button>
+        <button type="button" onclick="unexcludeAll()">🚫 全解除</button>
+      </div>
+    </div>
+    <div class="msheet-foot"><button class="msheet-apply" id="sheet-apply" type="button">表示する</button></div>
+  </div>
+</div>
 
 <script>
 const ITER = 600000;
@@ -221,10 +355,19 @@ let ALL = [];
 function loadExcluded(){ try{ return new Set(JSON.parse(localStorage.getItem("skeb_excluded")||"[]")); }catch(e){ return new Set(); } }
 function saveExcluded(s){ localStorage.setItem("skeb_excluded", JSON.stringify([...s])); }
 let EXCLUDED = loadExcluded();
+let LAST_EXCLUDED = null;   // 直前に除外した handle（誤タップの1タップ復旧用）
 function excludeHandle(h){
-  EXCLUDED.add(String(h).toLowerCase());
+  LAST_EXCLUDED = String(h).toLowerCase();
+  EXCLUDED.add(LAST_EXCLUDED);
   saveExcluded(EXCLUDED);
-  render(); updateExbar();
+  render({keep:true}); updateExbar();
+}
+function undoExclude(){
+  if(!LAST_EXCLUDED) return;
+  EXCLUDED.delete(LAST_EXCLUDED);
+  saveExcluded(EXCLUDED);
+  LAST_EXCLUDED = null;
+  render({keep:true}); updateExbar();
 }
 function unexcludeAll(){
   if(!confirm("端末の除外リストを全解除しますか？（コレクション側の除外は exclude.py で管理）")) return;
@@ -240,9 +383,9 @@ function updateExbar(){
   if(!EXCLUDED.size){ bar.classList.add("hidden"); return; }
   bar.classList.remove("hidden");
   bar.innerHTML = `🚫 除外中 <b>${EXCLUDED.size}</b> 名（この端末で非表示）`
-    + ` <button onclick="copyExcludeCmd()">コレクションに反映（コマンドをコピー）</button>`
-    + ` <button onclick="unexcludeAll()">全解除</button>`
-    + ` <span>※「反映」したコマンドを巡回PCで実行すると今後も収集しません</span>`;
+    + (LAST_EXCLUDED ? ` <button class="exundo" onclick="undoExclude()">↩ 元に戻す</button>` : "")
+    + ` <button onclick="copyExcludeCmd()" title="※「反映」したコマンドを巡回PCで実行すると今後も収集しません">コレクションに反映（コマンドをコピー）</button>`
+    + ` <button onclick="unexcludeAll()">全解除</button>`;
 }
 
 // ---- お気に入り（⭐ を GAS+Sheet で 3〜4 人共有 / 誰が付けたか属性つき）----
@@ -310,10 +453,14 @@ async function toggleFav(h){
   //   want=true のまま（＝クリック時の意図どおり「付ける」）なので誤って解除しない。
   if(want && !already) cur.push({uid:ME.uid, name:ME.name});
   else if(!want && already){ const i = cur.findIndex(x=>x.uid===ME.uid); if(i>=0) cur.splice(i,1); }
-  FAVMAP.set(key, cur); render(); updateFavbar();
+  FAVMAP.set(key, cur);
+  // 局所更新（f-fav絞り込み中はカードの出入りが起きるので全再描画へフォールバック）
+  const favMode = document.getElementById("f-fav").value;
+  const sync = () => { if(favMode){ render({keep:true}); } else { syncFavButtons(h); } updateFavbar(); };
+  sync();
   try{ await postFav(want?"add":"remove", h); }
   catch(e){ alert("お気に入りの同期に失敗しました。時間をおいて再度お試しください。"); await loadFavs(); }
-  render(); updateFavbar();
+  sync();
 }
 async function renameMe(){
   const n = (prompt("表示名を変更", ME.name) || "").trim().slice(0,40);
@@ -325,7 +472,7 @@ async function renameMe(){
       body:JSON.stringify({secret:FAV.secret, action:"rename", uid:ME.uid, name:ME.name})})).json();
     if(j && j.ok){ buildFavMap(j.favorites); setFavCache(j.favorites); }
   }catch(e){} }
-  render(); updateFavbar();
+  render({keep:true}); updateFavbar();   // 表示名変更はカード集合を変えない＝表示件数・位置を保つ
 }
 function favBtnHtml(c){
   if(!FAV) return "";
@@ -333,7 +480,20 @@ function favBtnHtml(c){
   const names = list.map(x=>esc(x.name||"名無し")).join("・");
   const who = cnt ? ` <span class="who">${cnt}</span>` : "";
   const title = cnt ? "お気に入り: " + names : "お気に入りに追加";
-  return `<button class="favbtn${mine?" on":""}" onclick="toggleFav('${esc(c.handle)}')" title="${title}">${mine?"⭐":"☆"}${who}</button>`;
+  return `<button class="favbtn${mine?" on":""}" data-h="${esc(favKey(c.handle))}" onclick="toggleFav('${esc(c.handle)}')" title="${title}">${mine?"⭐":"☆"}${who}</button>`;
+}
+
+// ⭐の局所更新: 全カード再構築（render）をせず、該当絵師のボタンだけ書き換える。
+// f-fav 絞り込み中はカードの出入りが起きるため呼び出し側で render にフォールバックする。
+function syncFavButtons(handle){
+  const key = favKey(handle);
+  const list = favList(handle), mine = iFaved(handle), cnt = list.length;
+  const names = list.map(x=>esc(x.name||"名無し")).join("・");
+  document.querySelectorAll(`.favbtn[data-h="${CSS.escape(key)}"]`).forEach(btn => {
+    btn.classList.toggle("on", mine);
+    btn.title = cnt ? "お気に入り: " + names : "お気に入りに追加";
+    btn.innerHTML = (mine ? "⭐" : "☆") + (cnt ? ` <span class="who">${cnt}</span>` : "");
+  });
 }
 function updateFavbar(){
   const bar = document.getElementById("favbar");
@@ -344,6 +504,8 @@ function updateFavbar(){
   bar.innerHTML = `⭐ お気に入り 全員 <b>${all}</b> 名・自分 <b>${mine}</b> 名`
     + ` <button onclick="loadFavsAndRender()">更新</button>`
     + ` <button onclick="renameMe()">表示名: ${esc(ME.name||"未設定")}</button>`;
+  const nameBtn = document.getElementById("sheet-name");
+  if(nameBtn) nameBtn.textContent = `表示名: ${ME.name || "未設定"}`;
 }
 async function loadFavsAndRender(){ await loadFavs(); render(); updateFavbar(); }
 
@@ -365,6 +527,8 @@ async function loadAndRender(password){
   const enc = await (await fetch("./data.json", {cache:"no-store"})).json();
   const data = await decryptPayload(enc, password);
   ALL = data.creators || [];
+  // 検索索引の事前計算（毎キーストロークの全件文字列連結を排除）
+  ALL.forEach(c => { c._hay = (c.name + " @" + c.handle + " " + (c.vtuber_hits||[]).join(" ")).toLowerCase(); });
   FAV = (data._meta && data._meta.fav) || null;   // ⭐共有の endpoint/secret（無ければ機能OFF）
   // 価格帯セレクトを meta から構築
   const fp = document.getElementById("f-price");
@@ -372,7 +536,13 @@ async function loadAndRender(password){
     const o = document.createElement("option"); o.value = b; o.textContent = b; fp.appendChild(o);
   });
   document.getElementById("gate").classList.add("hidden");
-  ["hdr","count","grid","ftr"].forEach(id => document.getElementById(id).classList.remove("hidden"));
+  ["hdr","subrow","grid","ftr","btab"].forEach(id => document.getElementById(id).classList.remove("hidden"));
+  if(!FAV){ document.querySelectorAll("#btab [data-fav]").forEach(b => { if(b.dataset.fav) b.style.display = "none"; }); }
+  // コンパクト表示（PC）の復元
+  if(localStorage.getItem("skeb_compact") === "1"){
+    document.getElementById("f-compact").checked = true;
+    document.getElementById("grid").classList.add("compact");
+  }
   bindControls();
   if(FAV) await loadFavs();          // 共有お気に入りを取得（属性つき）
   render();
@@ -403,10 +573,7 @@ function filtered(){
       if (!nsfwOk && c.nsfw) return false;
       if (!revOk && c.needs_review) return false;
     }
-    if (q){
-      const hay = (c.name + " @" + c.handle + " " + (c.vtuber_hits||[]).join(" ")).toLowerCase();
-      if (!hay.includes(q)) return false;
-    }
+    if (q && !c._hay.includes(q)) return false;
     return true;
   });
   const sort = document.getElementById("f-sort").value;
@@ -421,38 +588,52 @@ function filtered(){
   return r.sort(cmp);
 }
 
-function workHtml(w, i, nsfwShown){
+function workHtml(w, i, nsfwShown, eager){
   // 画像ありはサムネ表示（読み込み失敗時は onerror でリンクへ退避）。R-18 は非表示時ぼかし。
+  // eager=ファーストビュー相当（先頭カード）は優先読み込み、以降は lazy。
   if (w.thumb){
     const nsfw = (w.nsfw && !nsfwShown) ? " nsfw" : "";
+    const load = eager ? `fetchpriority="high" decoding="async"` : `loading="lazy" decoding="async"`;
     return `<a class="thumb${nsfw}" href="${esc(w.url)}" target="_blank" rel="noopener noreferrer">`
-      + `<img loading="lazy" referrerpolicy="no-referrer" src="${esc(w.thumb)}" alt="作品${i+1}"`
+      + `<img ${load} referrerpolicy="no-referrer" src="${esc(w.thumb)}" alt="作品${i+1}"`
       + ` onerror="this.closest('.thumb').classList.add('fail');this.remove();">`
       + `<span class="tlink">作品${i+1}↗</span></a>`;
   }
   return `<a class="work" href="${esc(w.url)}" target="_blank" rel="noopener noreferrer">作品${i+1}↗</a>`;
 }
 
-function card(c, nsfwShown){
+function card(c, nsfwShown, idx){
   const badges = [];
   badges.push(`<span class="b ${c.accepting==="accepting"?"ok":"stop"}">${ACC_LABEL[c.accepting]||"?"}</span>`);
-  if (c.price_band) badges.push(`<span class="b price">${esc(c.price_band)}${c.price_illust?`（¥${Number(c.price_illust).toLocaleString()}〜）`:""}</span>`);
   if (c.vtuber_tier) badges.push(`<span class="b tier">VTuber ${esc(c.vtuber_tier)}</span>`);
   if (c.nsfw) badges.push(`<span class="b r18">R-18</span>`);
   if (c.needs_review) badges.push(`<span class="b rev">要目視</span>`);
 
-  const hits = (c.vtuber_hits||[]).slice(0,6).map(h => `<span class="hit">${esc(h)}</span>`).join("");
+  // 価格は第一級情報として名前の直下に（バッジ列から独立）
+  const price = c.price_band
+    ? `<div class="c-price">${esc(c.price_band)}${c.price_illust?`（¥${Number(c.price_illust).toLocaleString()}〜）`:""}</div>` : "";
+
+  const hitsAll = (c.vtuber_hits||[]);
+  const hits = hitsAll.slice(0,6).map(h => `<span class="hit" data-hit="${esc(h)}">${esc(h)}</span>`).join("");
   const meta = [];
   if (c.complete_rate != null) meta.push(`完了率 ${esc(c.complete_rate)}%`);
   if (c.received_count != null) meta.push(`受注 ${esc(c.received_count)}`);
   if (c.genres?.length) meta.push(esc(c.genres.join("/")));
-  const works = (c.works||[]).map((w,i) => workHtml(w, i, nsfwShown)).join("");
+  const eager = (idx != null && idx < 4);
+  const works = (c.works||[]).map((w,i) => workHtml(w, i, nsfwShown, eager)).join("");
+  // サムネ先頭化: サムネ付きはカード最上部にフルブリード（絵→名前→条件の視線順）。
+  // サムネ無し（テキストリンクのみ）は従来どおり下部に置く。
+  const hasThumb = (c.works||[]).some(w => w.thumb);
+  const worksLead = hasThumb ? `<div class="works lead">${works}</div>` : "";
+  const worksBottom = (!hasThumb && works) ? `<div class="works">${works}</div>` : "";
 
   return `<div class="card ${c.is_prime_target?"prime":""}">
+    ${worksLead}
     <div class="c-head">
       <div>
         <div class="c-name">${esc(c.name)}</div>
         <a class="c-handle" href="${esc(c.url)}" target="_blank" rel="noopener noreferrer">@${esc(c.handle)}</a>
+        ${price}
       </div>
       <div class="c-actions">
         ${favBtnHtml(c)}
@@ -460,37 +641,172 @@ function card(c, nsfwShown){
       </div>
     </div>
     <div class="badges">${badges.join("")}</div>
-    ${hits?`<div class="hits">${hits}</div>`:""}
+    ${hits?`<div class="hits" title="${esc(hitsAll.join("・"))}">${hits}</div>`:""}
     ${meta.length?`<div class="meta">${meta.map(m=>`<span>${m}</span>`).join("")}</div>`:""}
-    ${works?`<div class="works">${works}</div>`:""}
-    <div class="reason">${esc(c.reason||"")}</div>
+    ${worksBottom}
+    ${c.needs_review?`<div class="reason">${esc(c.reason||"")}</div>`:""}
     <a class="open" href="${esc(c.url)}" target="_blank" rel="noopener noreferrer">Skebで開く ↗</a>
   </div>`;
 }
 
-function render(){
-  const list = filtered();
+// ---- 60件ずつの段階描画（1450カード一括DOM構築による初期表示の重さを解消） ----
+const PAGE = 60;
+let VIEW = [];        // filtered() の結果（描画対象の全量）
+let SHOWN = PAGE;     // いま DOM に出している件数
+
+function render(opts){
+  const keep = !!(opts && opts.keep);   // ⭐トグル等では表示件数・スクロール位置を保つ
+  VIEW = filtered();
+  if(!keep) SHOWN = PAGE;
+  SHOWN = Math.min(Math.max(SHOWN, PAGE), Math.max(VIEW.length, PAGE));
   const nsfwShown = document.getElementById("f-nsfw").checked;
-  document.getElementById("grid").innerHTML = list.map(c => card(c, nsfwShown)).join("") ||
+  document.getElementById("grid").innerHTML = VIEW.slice(0, SHOWN).map((c,i) => card(c, nsfwShown, i)).join("") ||
     `<div class="reason" style="padding:20px">該当する絵師がいません（フィルタを緩めてください）</div>`;
-  const prime = list.filter(c => c.is_prime_target).length;
-  document.getElementById("count").textContent = `${list.length} 名表示（主対象 ${prime}）／ 全 ${ALL.length} 名`;
+  const prime = VIEW.filter(c => c.is_prime_target).length;
+  document.getElementById("count").textContent = `${VIEW.length} 名表示（主対象 ${prime}）／ 全 ${ALL.length} 名`;
+  document.getElementById("more-wrap").classList.toggle("hidden", VIEW.length <= SHOWN);
+  const apply = document.getElementById("sheet-apply");
+  if(apply) apply.textContent = `${VIEW.length} 名を表示`;
+  updateBtab();
+  updateSheetBadge();
+}
+
+function showMore(){
+  if(SHOWN >= VIEW.length) return;
+  const nsfwShown = document.getElementById("f-nsfw").checked;
+  const next = Math.min(SHOWN + PAGE, VIEW.length);
+  const html = VIEW.slice(SHOWN, next).map((c,i) => card(c, nsfwShown, SHOWN + i)).join("");
+  document.getElementById("grid").insertAdjacentHTML("beforeend", html);
+  SHOWN = next;
+  document.getElementById("more-wrap").classList.toggle("hidden", VIEW.length <= SHOWN);
+}
+
+// ---- 下部タブバー（モバイル）: ⭐絞り込みの状態を反映 ----
+function updateBtab(){
+  const cur = FAV ? document.getElementById("f-fav").value : "";
+  document.querySelectorAll("#btab [data-fav]").forEach(b =>
+    b.classList.toggle("on", b.dataset.fav === cur));
+}
+
+// ---- ⚙バッジ: 既定値から変更されているフィルタ数 ----
+const FILTER_DEFAULTS = {"f-acc":"accepting","f-price":"","f-tier":"","f-fav":"","f-sort":"reco"};
+function updateSheetBadge(){
+  let n = 0;
+  for(const [id, def] of Object.entries(FILTER_DEFAULTS)){
+    const el = document.getElementById(id);
+    if(el && el.value !== def) n++;
+  }
+  if(document.getElementById("f-nsfw").checked) n++;
+  if(!document.getElementById("f-rev").checked) n++;
+  document.getElementById("sheet-badge").textContent = n ? String(n) : "";
 }
 
 function bindControls(){
-  ["q","f-acc","f-price","f-tier","f-sort","f-nsfw","f-rev"].forEach(id => {
-    const el = document.getElementById(id);
-    el.addEventListener(el.tagName==="INPUT" && el.type!=="checkbox" ? "input":"change", render);
+  // 検索はデバウンス（1キーごとの全件フィルタ＋全置換によるタイプ中フリーズを解消）
+  let qTimer = null;
+  document.getElementById("q").addEventListener("input", () => {
+    clearTimeout(qTimer); qTimer = setTimeout(() => render(), 150);
+  });
+  ["f-acc","f-price","f-tier","f-sort","f-nsfw","f-rev"].forEach(id => {
+    document.getElementById(id).addEventListener("change", () => render());
   });
   const ff = document.getElementById("f-fav");
   if(ff){
     if(!FAV){ ff.style.display = "none"; }        // 共有未設定なら ⭐絞り込みは隠す
     else { ff.addEventListener("change", loadFavsAndRender); }  // 最新の共有状態へ同期して再描画
   }
+  // コンパクト表示（PC）
+  document.getElementById("f-compact").addEventListener("change", e => {
+    document.getElementById("grid").classList.toggle("compact", e.target.checked);
+    localStorage.setItem("skeb_compact", e.target.checked ? "1" : "0");
+  });
+  // もっと見る（クリック＋sentinel の IntersectionObserver 両対応）
+  document.getElementById("more-btn").addEventListener("click", showMore);
+  if("IntersectionObserver" in window){
+    new IntersectionObserver(es => { if(es.some(e => e.isIntersecting)) showMore(); },
+      {rootMargin: "600px"}).observe(document.getElementById("more-sentinel"));
+  }
+  // 緑タグタップ→そのVTuber名で検索（委譲リスナー）
+  document.getElementById("grid").addEventListener("click", e => {
+    const hit = e.target.closest(".hit");
+    if(!hit) return;
+    e.preventDefault();
+    document.getElementById("q").value = hit.dataset.hit || hit.textContent;
+    render();
+    window.scrollTo({top: 0});
+  });
+  // 下部タブバー
+  document.querySelectorAll("#btab [data-fav]").forEach(b => b.addEventListener("click", () => {
+    const ff2 = document.getElementById("f-fav");
+    if(ff2){ ff2.value = b.dataset.fav; }
+    if(b.dataset.fav && FAV){ loadFavsAndRender(); } else { render(); }
+    window.scrollTo({top: 0});
+  }));
+  // smooth はヘッドレス系で不発になる環境があるため即時スクロール（確実性優先）
+  document.getElementById("btab-top").addEventListener("click", () => window.scrollTo(0, 0));
+  document.getElementById("btab-sheet").addEventListener("click", openSheet);
+  // 絞り込みシート
+  document.getElementById("sheet-open").addEventListener("click", openSheet);
+  document.getElementById("msheet-x").addEventListener("click", closeSheet);
+  document.getElementById("msheet-backdrop").addEventListener("click", closeSheet);
+  document.getElementById("sheet-apply").addEventListener("click", closeSheet);
 }
 
+// ---- 絞り込みボトムシート（フィルタUIをモバイルではシートへ移設・刀剣listingの実証パターン） ----
+const MQ_MOBILE = window.matchMedia("(max-width:768px)");
+const SHEET_FIELD_IDS = ["f-acc","f-price","f-tier","f-fav","f-sort"];
+let SHEET_MOVED = null;   // [{el, ph}] 原位置復元用プレースホルダ
+let SHEET_HIDE_TIMER = null;
+function sheetMoveIn(){
+  if(SHEET_MOVED) return;
+  const body = document.getElementById("sheet-filters");
+  const els = SHEET_FIELD_IDS.map(id => document.getElementById(id))
+    .concat([document.getElementById("f-nsfw").closest("label"),
+             document.getElementById("f-rev").closest("label")]);
+  SHEET_MOVED = els.filter(Boolean).map(el => {
+    const ph = document.createElement("div"); ph.hidden = true;
+    el.before(ph); body.appendChild(el);
+    return {el, ph};
+  });
+}
+function sheetMoveBack(){
+  if(!SHEET_MOVED) return;
+  SHEET_MOVED.forEach(m => m.ph.replaceWith(m.el));
+  SHEET_MOVED = null;
+}
+function openSheet(){
+  if(!MQ_MOBILE.matches) return;
+  sheetMoveIn();
+  const nameBtn = document.getElementById("sheet-name");
+  if(nameBtn) nameBtn.textContent = `表示名: ${ME.name || "未設定"}`;
+  const s = document.getElementById("msheet");
+  clearTimeout(SHEET_HIDE_TIMER);
+  s.hidden = false;
+  void s.offsetHeight;   // 強制リフローで transition を確実に発火
+  s.classList.add("open");
+  document.body.classList.add("sheet-open");
+}
+function closeSheet(){
+  const s = document.getElementById("msheet");
+  if(!s || s.hidden) return;
+  s.classList.remove("open");
+  document.body.classList.remove("sheet-open");
+  clearTimeout(SHEET_HIDE_TIMER);
+  SHEET_HIDE_TIMER = setTimeout(() => { s.hidden = true; }, 260);
+}
+function restoreIfDesktop(){
+  if(!MQ_MOBILE.matches){ closeSheet(); sheetMoveBack(); }
+}
+MQ_MOBILE.addEventListener("change", restoreIfDesktop);
+// matchMedia の change はエミュレーション環境等で発火しないことがあるため resize でも冗長化
+window.addEventListener("resize", restoreIfDesktop);
+
 // ---- gate ----
+let UNLOCK_BUSY = false;   // 二重解錠ガード（ダブルクリック/Enter+クリック/自動解錠との競合で
+                            // loadAndRender→bindControls が2回走るとリスナーが重複登録される）
 async function tryUnlock(pw){
+  if(UNLOCK_BUSY) return;
+  UNLOCK_BUSY = true;
   const err = document.getElementById("gerr");
   err.textContent = "解錠中…";
   try{
@@ -499,6 +815,8 @@ async function tryUnlock(pw){
   }catch(e){
     localStorage.removeItem("skeb_pw");     // 保存値が無効（PW変更等）なら消して再入力を促す
     err.textContent = "解錠失敗（パスワードを確認）";
+  }finally{
+    UNLOCK_BUSY = false;                    // 失敗時の再入力は従来どおり可能
   }
 }
 document.getElementById("unlock").addEventListener("click", () => tryUnlock(document.getElementById("pw").value));
@@ -509,7 +827,7 @@ function toggleHelp(show){ document.getElementById("help").classList.toggle("hid
 document.getElementById("help-open").addEventListener("click", () => toggleHelp(true));
 document.getElementById("help-close").addEventListener("click", () => toggleHelp(false));
 document.getElementById("help").addEventListener("click", e => { if(e.target.id === "help") toggleHelp(false); });
-document.addEventListener("keydown", e => { if(e.key === "Escape") toggleHelp(false); });
+document.addEventListener("keydown", e => { if(e.key === "Escape"){ toggleHelp(false); closeSheet(); } });
 window.addEventListener("DOMContentLoaded", () => {
   const saved = localStorage.getItem("skeb_pw");
   if (saved) tryUnlock(saved);
