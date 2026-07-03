@@ -66,6 +66,7 @@ header{padding:18px 16px 8px;border-bottom:1px solid var(--line);position:sticky
 .b.price{color:var(--txt)}
 .b.r18{color:#2a0f0c;background:var(--warn);border-color:var(--warn);font-weight:600}
 .b.rev{border-style:dashed}
+.b.new{color:#08131f;background:#5ac8e0;border-color:#5ac8e0;font-weight:700}
 /* 緑タグは1行固定（カード高を揃え横スキャン可能に）。PCは端をフェード、モバイルは横スクロール */
 .hits{display:flex;flex-wrap:nowrap;gap:5px;overflow:hidden;
   -webkit-mask-image:linear-gradient(90deg,#000 88%,transparent);mask-image:linear-gradient(90deg,#000 88%,transparent)}
@@ -237,6 +238,7 @@ body.sheet-open{overflow:hidden}
     <div class="step"><span class="n">1</span><span><b>主対象（◎）を最優先</b> ＝「募集中」かつ「イラスト」かつ「VTuber適性が <b>確実 / 有力</b>」の絵師（カードが金枠）。</span></div>
     <div class="step"><span class="n">2</span><span>次に<b>受付状況</b>：募集中 → 受付不明 → 休止中。</span></div>
     <div class="step"><span class="n">3</span><span>同じなら<b>VTuber適性スコアの高い順</b>。</span></div>
+    <p>ほかに <b>新着順 / 価格 / VTuber適性 / 完了率 / 受注数 / 名前</b> で並び替えできます。</p>
 
     <h3>VTuber適性ランクの意味</h3>
     <ul>
@@ -251,10 +253,10 @@ body.sheet-open{overflow:hidden}
       <li><b>募集中のみ</b>：いまリクエスト受付中だけ表示（既定）</li>
       <li><b>価格</b>：イラスト最低額の帯で絞る</li>
       <li><b>VTuber適性</b>：上のランクで絞る</li>
-      <li><b>R-18も表示</b>：オフで成人向けを隠す（既定オフ）</li>
+      <li><b>R-18サムネ表示</b>：オフで成人向け作品サムネをぼかす（既定オフ・安全側）。※R-18も受ける絵師も<b>一覧には常に表示</b>されます（SFW作品も描けるため。バッジで判別可）</li>
       <li><b>要目視も表示</b>：価格・受付・ジャンルが不明な絵師を含めるか</li>
-      <li><b>⭐自分 / ⭐全員</b>：お気に入りだけに絞る（下記）。絞ると受付・R-18 等の他条件は無視して全お気に入りを表示</li>
-      <li>上の検索枠は<b>名前・@handle・描いた VTuber 名</b>で絞れます</li>
+      <li><b>⭐自分 / ⭐全員</b>：お気に入りだけに絞る（下記）。絞ると受付・価格 等の他条件は無視して全お気に入りを表示</li>
+      <li>上の検索枠は<b>名前・@handle・描いた VTuber 名・プロフィール文</b>で絞れます（「Live2D」「立ち絵」等も検索可）</li>
     </ul>
 
     <h3>🚫 除外（合わない絵師を弾く）</h3>
@@ -266,6 +268,9 @@ body.sheet-open{overflow:hidden}
     <b>誰が付けたか</b>（表示名）も出ます。初回だけ表示名を訊きます（端末に保存）。
     上部バーの「表示名」から変更、絞り込みの <b>⭐自分 / ⭐全員</b> で候補だけに絞れます。
     ⭐は<b>休止中でも隠れません</b>（候補を見失わないため）。「更新」で最新の共有状態に同期します。</p>
+
+    <h3>データの鮮度</h3>
+    <p>受付状況・価格は<b>収集した時点</b>の情報です。各カードの「<b>確認 ○日前</b>」がその絵師の最終確認日、上部の「<b>データ更新 M/D</b>」が最新ビルド日です。募集は Skeb 側で急に締まることがあるため、発注前に「Skebで開く」で最新をご確認ください。</p>
 
     <h3>作品サムネ・発注</h3>
     <p>カードの作品画像はクリックで Skeb の作品ページへ（画像は Skeb の参照表示）。
@@ -280,7 +285,7 @@ body.sheet-open{overflow:hidden}
     <button class="help-btn" id="help-open">❓ 使い方</button>
   </div>
   <div class="bar">
-    <input id="q" type="search" placeholder="名前 / @handle / 描いたVTuberで検索" />
+    <input id="q" type="search" placeholder="名前 / @handle / VTuber名 / プロフィールで検索" />
     <select id="f-acc">
       <option value="accepting">募集中のみ</option>
       <option value="all">受付すべて</option>
@@ -301,12 +306,15 @@ body.sheet-open{overflow:hidden}
     </select>
     <select id="f-sort">
       <option value="reco">おすすめ順</option>
+      <option value="new">新着順</option>
       <option value="price-asc">価格 安い順</option>
       <option value="price-desc">価格 高い順</option>
       <option value="score">VTuber適性 高い順</option>
+      <option value="complete">完了率 高い順</option>
+      <option value="received">受注数 多い順</option>
       <option value="name">名前順</option>
     </select>
-    <label class="chk"><input type="checkbox" id="f-nsfw"> R-18も表示</label>
+    <label class="chk"><input type="checkbox" id="f-nsfw"> R-18サムネ表示</label>
     <label class="chk"><input type="checkbox" id="f-rev" checked> 要目視も表示</label>
     <label class="chk"><input type="checkbox" id="f-compact"> コンパクト表示</label>
     <button id="sheet-open" type="button">⚙ 絞り込み<span id="sheet-badge"></span></button>
@@ -314,12 +322,13 @@ body.sheet-open{overflow:hidden}
 </header>
 <div class="subrow hidden" id="subrow">
   <div class="count" id="count"></div>
+  <div class="count" id="dataage"></div>
   <div id="favbar" class="hidden"></div>
   <div id="exbar" class="hidden"></div>
 </div>
 <div class="grid hidden" id="grid"></div>
 <div id="more-wrap" class="hidden"><button id="more-btn" type="button">もっと見る</button><div id="more-sentinel"></div></div>
-<footer class="hidden" id="ftr">ビルド: 2026-07-03T11:09:30 ／ 収録 3495 名 ／ 個人利用・社内非公開 ／ 画像は Skeb CDN 参照（再ホストなし）</footer>
+<footer class="hidden" id="ftr">ビルド: 2026-07-03T15:48:20 ／ 収録 3495 名 ／ 個人利用・社内非公開 ／ 画像は Skeb CDN 参照（再ホストなし）</footer>
 
 <nav class="btab hidden" id="btab">
   <button type="button" data-fav="" class="on"><span class="bt-ico">👥</span><span>すべて</span></button>
@@ -350,6 +359,7 @@ body.sheet-open{overflow:hidden}
 <script>
 const ITER = 600000;
 let ALL = [];
+let GENERATED_AT = "";   // データ生成時刻（_meta.generated_at）— 鮮度表示用
 
 // ---- 除外（localStorage で端末ローカル即時非表示 ＋ コレクション反映コマンド）----
 function loadExcluded(){ try{ return new Set(JSON.parse(localStorage.getItem("skeb_excluded")||"[]")); }catch(e){ return new Set(); } }
@@ -527,8 +537,9 @@ async function loadAndRender(password){
   const enc = await (await fetch("./data.json", {cache:"no-store"})).json();
   const data = await decryptPayload(enc, password);
   ALL = data.creators || [];
-  // 検索索引の事前計算（毎キーストロークの全件文字列連結を排除）
-  ALL.forEach(c => { c._hay = (c.name + " @" + c.handle + " " + (c.vtuber_hits||[]).join(" ")).toLowerCase(); });
+  GENERATED_AT = (data._meta && data._meta.generated_at) || "";
+  // 検索索引の事前計算（毎キーストロークの全件文字列連結を排除）。bio も対象（Live2D/立ち絵 等）。
+  ALL.forEach(c => { c._hay = (c.name + " @" + c.handle + " " + (c.vtuber_hits||[]).join(" ") + " " + (c.bio||"")).toLowerCase(); });
   FAV = (data._meta && data._meta.fav) || null;   // ⭐共有の endpoint/secret（無ければ機能OFF）
   // 価格帯セレクトを meta から構築
   const fp = document.getElementById("f-price");
@@ -537,6 +548,8 @@ async function loadAndRender(password){
   });
   document.getElementById("gate").classList.add("hidden");
   ["hdr","subrow","grid","ftr","btab"].forEach(id => document.getElementById(id).classList.remove("hidden"));
+  const da = document.getElementById("dataage");
+  if(da) da.textContent = GENERATED_AT ? ("データ更新 " + fmtDate(GENERATED_AT)) : "";
   if(!FAV){ document.querySelectorAll("#btab [data-fav]").forEach(b => { if(b.dataset.fav) b.style.display = "none"; }); }
   // コンパクト表示（PC）の復元
   if(localStorage.getItem("skeb_compact") === "1"){
@@ -544,35 +557,41 @@ async function loadAndRender(password){
     document.getElementById("grid").classList.add("compact");
   }
   bindControls();
-  if(FAV) await loadFavs();          // 共有お気に入りを取得（属性つき）
+  // 先に一覧を描画（⭐共有 GAS の応答を待たせない＝解錠直後の空白画面を解消）。
   render();
   updateExbar();
   updateFavbar();
+  if(FAV){                           // ⭐共有は後追いで取得し、届いたら差分だけ再描画
+    loadFavs().then(() => { render({keep:true}); updateFavbar(); });
+  }
 }
 
 // ---- フィルタ / 描画 ----
 const ACC_LABEL = {accepting:"募集中", stopped:"休止中", unknown:"受付不明"};
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+// ---- 鮮度表示（収集時刻の可視化）----
+function fmtDate(iso){ const t = Date.parse(iso); if(isNaN(t)) return ""; const d = new Date(t); return (d.getMonth()+1) + "/" + d.getDate(); }
+function daysAgoLabel(iso){ const t = Date.parse(iso); if(isNaN(t)) return ""; const n = Math.floor((Date.now()-t)/86400000); return n<=0?"今日":(n===1?"昨日":n+"日前"); }
 
 function filtered(){
   const q = document.getElementById("q").value.trim().toLowerCase();
   const acc = document.getElementById("f-acc").value;
   const price = document.getElementById("f-price").value;
   const tier = document.getElementById("f-tier").value;
-  const nsfwOk = document.getElementById("f-nsfw").checked;
   const revOk = document.getElementById("f-rev").checked;
   const favMode = FAV ? document.getElementById("f-fav").value : "";
   let r = ALL.filter(c => {
     if (EXCLUDED.has(String(c.handle).toLowerCase())) return false;  // 端末ローカル除外
     if (favMode === "mine" && !iFaved(c.handle)) return false;
     if (favMode === "all" && favList(c.handle).length === 0) return false;
-    if (!favMode){  // ⭐絞り込み中は受付/価格/適性/R-18/要目視を無視（お気に入りを見失わない）
+    if (!favMode){  // ⭐絞り込み中は受付/価格/適性/要目視を無視（お気に入りを見失わない）
       if (acc !== "all" && c.accepting !== acc) return false;
       if (price && c.price_band !== price) return false;
       if (tier && c.vtuber_tier !== tier) return false;
-      if (!nsfwOk && c.nsfw) return false;
       if (!revOk && c.needs_review) return false;
     }
+    // R-18 も受ける絵師は隠さない（SFW も描ける＝主対象の取りこぼし防止）。
+    // 成人向け作品サムネのぼかしは f-nsfw で別制御（render の nsfwShown）。
     if (q && !c._hay.includes(q)) return false;
     return true;
   });
@@ -580,9 +599,12 @@ function filtered(){
   const accRank = {accepting:0, unknown:1, stopped:2};
   const cmp = {
     "reco": (a,b) => (a.is_prime_target?0:1)-(b.is_prime_target?0:1) || (accRank[a.accepting]??3)-(accRank[b.accepting]??3) || (b.vtuber_score||0)-(a.vtuber_score||0),
+    "new": (a,b) => String(b.first_seen||"").localeCompare(String(a.first_seen||"")),
     "price-asc": (a,b) => (a.price_illust??1e12)-(b.price_illust??1e12),
     "price-desc": (a,b) => (b.price_illust??-1)-(a.price_illust??-1),
     "score": (a,b) => (b.vtuber_score||0)-(a.vtuber_score||0),
+    "complete": (a,b) => (b.complete_rate??-1)-(a.complete_rate??-1),
+    "received": (a,b) => (b.received_count??-1)-(a.received_count??-1),
     "name": (a,b) => a.name.localeCompare(b.name, "ja"),
   }[sort];
   return r.sort(cmp);
@@ -604,7 +626,9 @@ function workHtml(w, i, nsfwShown, eager){
 
 function card(c, nsfwShown, idx){
   const badges = [];
+  const isNew = (() => { const t = Date.parse(c.first_seen||""); return !isNaN(t) && (Date.now()-t) < 2*86400000; })();  // 直近2日の実追加のみ（初期バックフィル日を除外）
   badges.push(`<span class="b ${c.accepting==="accepting"?"ok":"stop"}">${ACC_LABEL[c.accepting]||"?"}</span>`);
+  if (isNew) badges.push(`<span class="b new">NEW</span>`);
   if (c.vtuber_tier) badges.push(`<span class="b tier">VTuber ${esc(c.vtuber_tier)}</span>`);
   if (c.nsfw) badges.push(`<span class="b r18">R-18</span>`);
   if (c.needs_review) badges.push(`<span class="b rev">要目視</span>`);
@@ -619,6 +643,7 @@ function card(c, nsfwShown, idx){
   if (c.complete_rate != null) meta.push(`完了率 ${esc(c.complete_rate)}%`);
   if (c.received_count != null) meta.push(`受注 ${esc(c.received_count)}`);
   if (c.genres?.length) meta.push(esc(c.genres.join("/")));
+  if (c.last_checked){ const fa = daysAgoLabel(c.last_checked); if(fa) meta.push(`確認 ${fa}`); }
   const eager = (idx != null && idx < 4);
   const works = (c.works||[]).map((w,i) => workHtml(w, i, nsfwShown, eager)).join("");
   // サムネ先頭化: サムネ付きはカード最上部にフルブリード（絵→名前→条件の視線順）。
