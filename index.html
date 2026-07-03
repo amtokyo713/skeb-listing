@@ -188,6 +188,8 @@ body.sheet-open{overflow:hidden}
 /* help */
 .help-btn{margin-left:auto;font-size:12px;color:var(--acc);background:transparent;border:1px solid var(--acc2);border-radius:8px;padding:6px 11px;cursor:pointer;align-self:center}
 .help-btn:hover{background:rgba(224,177,90,.1)}
+/* ➕絵師追加はヘルプの左隣（margin-left:auto は先頭の #add-open だけが持つ） */
+#help-open{margin-left:0}
 #help{position:fixed;inset:0;background:rgba(0,0,0,.66);z-index:60;padding:16px;overflow-y:auto;display:flex}
 #help .hbox{background:var(--panel);border:1px solid var(--line);border-radius:16px;max-width:580px;width:100%;margin:auto;padding:24px 22px}
 #help h2{margin:0;font-size:18px;display:flex;align-items:center;justify-content:space-between}
@@ -269,6 +271,12 @@ body.sheet-open{overflow:hidden}
     上部バーの「表示名」から変更、絞り込みの <b>⭐自分 / ⭐全員</b> で候補だけに絞れます。
     ⭐は<b>休止中でも隠れません</b>（候補を見失わないため）。「更新」で最新の共有状態に同期します。</p>
 
+    <h3>➕ 絵師を追加（未掲載の絵師を申請）</h3>
+    <p>X などで見つけた絵師がこのサイトに無いときは、右上の「<b>➕ 絵師を追加</b>」（スマホは⚙内）に
+    <b>Skeb の URL</b>（skeb.jp/@xxxx）を貼ってください。<b>次回の自動更新（毎日11時ごろ）</b>で
+    収集・掲載され、<b>申請したあなたの⭐に自動で入ります</b>。登録済みの絵師ならその場でカードを表示します。
+    ※Skeb に存在しない URL や、イラストを提供していない絵師（ボイス専業等）は掲載されません。</p>
+
     <h3>データの鮮度</h3>
     <p>受付状況・価格は<b>収集した時点</b>の情報です。各カードの「<b>確認 ○日前</b>」がその絵師の最終確認日、上部の「<b>データ更新 M/D</b>」が最新ビルド日です。募集は Skeb 側で急に締まることがあるため、発注前に「Skebで開く」で最新をご確認ください。</p>
 
@@ -282,6 +290,7 @@ body.sheet-open{overflow:hidden}
   <div class="brand">
     <h1>skeb<span class="acc">-finder</span></h1>
     <span class="sub">いま募集中 × 予算 × VTuber を描ける絵師（社内）</span>
+    <button class="help-btn" id="add-open" onclick="requestAddPrompt()">➕ 絵師を追加</button>
     <button class="help-btn" id="help-open">❓ 使い方</button>
   </div>
   <div class="bar">
@@ -328,7 +337,7 @@ body.sheet-open{overflow:hidden}
 </div>
 <div class="grid hidden" id="grid"></div>
 <div id="more-wrap" class="hidden"><button id="more-btn" type="button">もっと見る</button><div id="more-sentinel"></div></div>
-<footer class="hidden" id="ftr">ビルド: 2026-07-03T15:48:20 ／ 収録 3495 名 ／ 個人利用・社内非公開 ／ 画像は Skeb CDN 参照（再ホストなし）</footer>
+<footer class="hidden" id="ftr">ビルド: 2026-07-03T16:46:00 ／ 収録 3496 名 ／ 個人利用・社内非公開 ／ 画像は Skeb CDN 参照（再ホストなし）</footer>
 
 <nav class="btab hidden" id="btab">
   <button type="button" data-fav="" class="on"><span class="bt-ico">👥</span><span>すべて</span></button>
@@ -346,6 +355,7 @@ body.sheet-open{overflow:hidden}
     <div class="msheet-body">
       <div id="sheet-filters"></div>
       <div class="msheet-tools">
+        <button type="button" onclick="requestAddPrompt()">➕ 絵師を追加</button>
         <button type="button" onclick="loadFavsAndRender()">⭐ 更新</button>
         <button type="button" onclick="renameMe()" id="sheet-name">表示名</button>
         <button type="button" onclick="copyExcludeCmd()">🚫 コレクションに反映</button>
@@ -519,6 +529,56 @@ function updateFavbar(){
 }
 async function loadFavsAndRender(){ await loadFavs(); render(); updateFavbar(); }
 
+// ---- ➕絵師を追加（Skeb URL 申請 → GAS キュー → 巡回PCが登録）----
+let EXCLUDED_SERVER = new Set();   // excluded.yml 由来（payload _meta.excluded_handles）
+function parseSkebHandle(s){
+  s = String(s||"").trim();
+  let m = s.match(/skeb\.jp\/@?([A-Za-z0-9_]{1,15})/i);   // URL形（クエリ/末尾スラッシュ許容）
+  if(!m) m = s.match(/^@?([A-Za-z0-9_]{1,15})$/);          // @handle / handle 単体
+  return m ? m[1] : null;
+}
+async function requestAddPrompt(){
+  const input = prompt("追加したい絵師の Skeb URL（または @ハンドル）\n例: https://skeb.jp/@xxxx");
+  if(input == null || !input.trim()) return;
+  const h = parseSkebHandle(input);
+  if(!h){ alert("URLを認識できませんでした。skeb.jp/@ハンドル の形で入力してください。"); return; }
+  const key = h.toLowerCase();
+  const hit = ALL.find(c => String(c.handle).toLowerCase() === key);
+  if(hit){
+    // 登録済み → フィルタを既定に緩めてカードを見せる（絞り込みで隠れていただけのケースも救済）
+    document.getElementById("f-acc").value = "all";
+    document.getElementById("f-price").value = "";
+    document.getElementById("f-tier").value = "";
+    const ff = document.getElementById("f-fav"); if(ff) ff.value = "";
+    document.getElementById("f-rev").checked = true;
+    document.getElementById("q").value = "@" + hit.handle;
+    render(); window.scrollTo(0, 0);
+    alert("この絵師は登録済みです。カードを表示しました。");
+    return;
+  }
+  if(EXCLUDED.has(key)){ alert("この絵師はこの端末で🚫除外中です。表示するには除外を解除してください。"); return; }
+  if(EXCLUDED_SERVER.has(key)){ alert("この絵師はコレクションから🚫除外済みです。\n復活させる場合は巡回PCで exclude.py remove を実行してください。"); return; }
+  if(!FAV){
+    // 共有GAS未設定時のフォールバック: 🚫除外と同じコマンドコピー方式
+    const cmd = "python seed_external.py --handles " + h + " --source user_request";
+    try{ await navigator.clipboard.writeText(cmd); alert("共有機能が無効のためコマンドをコピーしました。巡回PCで実行してください:\n" + cmd); }
+    catch(e){ prompt("巡回PCで実行してください:", cmd); }
+    return;
+  }
+  if(!ensureName()) return;   // ⭐自動付与のため申請者名を確定（既存⭐と同じ流儀）
+  try{
+    const j = await (await fetch(FAV.endpoint, {method:"POST",
+      headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body: JSON.stringify({secret:FAV.secret, action:"request_add", handle:key, uid:ME.uid, name:ME.name})})).json();
+    if(!j || !j.ok) throw new Error((j && j.error) || "post-failed");
+    alert(j.already
+      ? "@" + h + " はすでに申請中です。次回の自動更新（毎日11時ごろ）で反映されます。"
+      : "@" + h + " を申請しました。次回の自動更新（毎日11時ごろ）で反映され、あなたの⭐に自動で入ります。");
+  }catch(e){
+    alert("申請に失敗しました。時間をおいて再度お試しください。");
+  }
+}
+
 // ---- 復号（crypto.py と対：PBKDF2-SHA256/AES-256-GCM/gzip）----
 function b64(s){ return Uint8Array.from(atob(s), c => c.charCodeAt(0)); }
 async function decryptPayload(enc, password){
@@ -541,6 +601,7 @@ async function loadAndRender(password){
   // 検索索引の事前計算（毎キーストロークの全件文字列連結を排除）。bio も対象（Live2D/立ち絵 等）。
   ALL.forEach(c => { c._hay = (c.name + " @" + c.handle + " " + (c.vtuber_hits||[]).join(" ") + " " + (c.bio||"")).toLowerCase(); });
   FAV = (data._meta && data._meta.fav) || null;   // ⭐共有の endpoint/secret（無ければ機能OFF）
+  EXCLUDED_SERVER = new Set((data._meta && data._meta.excluded_handles) || []);
   // 価格帯セレクトを meta から構築
   const fp = document.getElementById("f-price");
   (data._meta?.price_bands || []).forEach(b => {
