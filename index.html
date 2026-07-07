@@ -30,12 +30,12 @@ header{padding:18px 16px 8px;border-bottom:1px solid var(--line);position:sticky
 .bar label.chk{display:inline-flex;align-items:center;gap:6px;color:var(--mut);font-size:12px;
   background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:7px 10px}
 .count{color:var(--mut);font-size:12px;margin:10px 16px 0}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;padding:12px 16px 40px;max-width:1760px;margin:0 auto}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(350px,1fr));gap:12px;padding:12px 16px 40px;max-width:1760px;margin:0 auto}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:10px;
-  content-visibility:auto;contain-intrinsic-size:auto 340px}
+  content-visibility:auto;contain-intrinsic-size:auto 380px}
 .card.prime{border-color:var(--acc2);box-shadow:0 0 0 1px rgba(224,177,90,.25) inset}
 /* 広画面は列を増やして一覧性を上げる */
-@media(min-width:1440px){.grid{grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}}
+@media(min-width:1440px){.grid{grid-template-columns:repeat(auto-fill,minmax(320px,1fr))}}
 /* コンパクト表示（PC専用）: 作品サムネと理由行を隠し条件スキャンに特化。
    トグルはPCのみ表示のため、モバイルでは .compact が付いていても適用しない */
 @media(min-width:769px){
@@ -54,7 +54,8 @@ header{padding:18px 16px 8px;border-bottom:1px solid var(--line);position:sticky
 .favbtn:hover{color:var(--acc);border-color:var(--acc)}
 .favbtn.on{color:#1c150a;background:var(--acc);border-color:var(--acc);font-weight:700}
 .favbtn .who{font-size:10px;opacity:.9;margin-left:2px}
-.c-name{font-weight:600;font-size:15px;line-height:1.3}
+.c-name{display:block;width:fit-content;font-weight:600;font-size:15px;line-height:1.3;text-decoration:none}
+.c-name:hover{color:var(--acc);text-decoration:underline}
 .c-handle{color:var(--mut);font-size:12px;text-decoration:none}
 .c-handle:hover{color:var(--acc)}
 .c-price{color:var(--acc);font-size:13.5px;font-weight:600;margin-top:2px}
@@ -76,11 +77,7 @@ header{padding:18px 16px 8px;border-bottom:1px solid var(--line);position:sticky
 .b.st-発注済{background:#e0b15a;border-color:#e0b15a}
 .b.st-納品済{background:#3fb27f;border-color:#3fb27f}
 .b.st-見送り{background:#6a6f80;border-color:#6a6f80;color:#e8eaf0}
-/* 緑タグは1行固定（カード高を揃え横スキャン可能に）。PCは端をフェード、モバイルは横スクロール */
-.hits{display:flex;flex-wrap:nowrap;gap:5px;overflow:hidden;
-  -webkit-mask-image:linear-gradient(90deg,#000 88%,transparent);mask-image:linear-gradient(90deg,#000 88%,transparent)}
-.hit{flex:0 0 auto;white-space:nowrap;font-size:11px;color:var(--acc);background:rgba(224,177,90,.08);border:1px solid rgba(224,177,90,.3);border-radius:6px;padding:2px 7px;cursor:pointer}
-.hit:hover{background:rgba(224,177,90,.2);border-color:var(--acc)}
+/* VTuber名タグ行（.hits/.hit）は 2026-07-07 廃止（オーナー指示「タグは不要」。詳細ビューのチップ表示は継続） */
 .meta{display:flex;gap:14px;color:var(--mut);font-size:12px;flex-wrap:wrap}
 .works{display:flex;gap:8px;flex-wrap:wrap}
 /* サムネ先頭化: サムネ付き作品ブロックはカード最上部にフルブリード表示（絵が第一判断材料） */
@@ -95,16 +92,7 @@ header{padding:18px 16px 8px;border-bottom:1px solid var(--line);position:sticky
 .thumb.fail::before{content:"作品を見る ↗";color:var(--mut);font-size:12px}
 .work{font-size:12px;color:var(--mut);text-decoration:none;border:1px solid var(--line);border-radius:8px;padding:4px 9px;background:var(--panel2)}
 .work:hover{border-color:var(--acc);color:var(--acc)}
-.open{margin-top:2px;text-align:center;text-decoration:none;font-weight:600;font-size:13px;
-  color:#1c150a;background:var(--acc);border-radius:10px;padding:9px 12px;border:1px solid var(--acc)}
-.open:hover{background:var(--acc2)}
-/* PCはCTAをゴースト化して金を「主対象」とhoverに絞る（アクセント飽和の解消） */
-@media(min-width:601px){
-  .open{background:transparent;border-color:var(--acc2);color:var(--acc)}
-  .open:hover{background:var(--acc);color:#1c150a}
-  .card.prime .open{background:var(--acc);color:#1c150a}
-  .card.prime .open:hover{background:var(--acc2)}
-}
+/* 「Skebで開く」CTA（.open）は 2026-07-07 廃止 — 絵師名（.c-name）クリックで Skeb を開く */
 .reason{color:var(--mut);font-size:11px}
 footer{color:var(--mut);font-size:11px;text-align:center;padding:18px}
 /* ===== 段階描画（もっと見る） ===== */
@@ -121,29 +109,25 @@ footer{color:var(--mut);font-size:11px;text-align:center;padding:18px}
   header{padding:10px 12px 8px}
   .brand .sub{display:none}
   .bar{flex-wrap:nowrap;margin-top:8px}
-  .bar select,.bar label.chk{display:none}  /* フィルタ群は⚙シートへ移設 */
+  .bar select,.bar label.chk,.bar .pricebox{display:none}  /* フィルタ群は⚙シートへ移設 */
   .bar input[type=search]{font-size:16px;min-height:42px}  /* iOSの強制ズーム防止 */
   /* ⚙は .bar 前置で詳細度UP（後方の基底 #sheet-open{display:none} に勝つため。CSS詳細度の罠） */
   .bar #sheet-open{display:inline-flex}
   .favbtn,.exbtn,.detbtn{min-height:36px;padding:7px 10px;font-size:13px}
   .c-x{padding:3px 8px;font-size:12px}
   .c-actions{gap:8px}
-  #favbar button,#exbar button:not(.exundo){display:none}  /* 低頻度ボタンは⚙シート内へ */
+  #favbar button,#exbar button:not(.exundo):not(.exview){display:none}  /* 低頻度ボタンは⚙シート内へ（↩と除外一覧トグルは残す） */
   .subrow{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;margin:6px 12px 0}
   .subrow>*{flex:0 0 auto}
   body{padding-bottom:calc(64px + env(safe-area-inset-bottom))}
-  /* タッチ帯(〜768px)は緑タグを横スクロールで全量閲覧・タップ可能に（maskはhover前提のPC専用） */
-  .hits{overflow-x:auto;-webkit-overflow-scrolling:touch;-webkit-mask-image:none;mask-image:none}
-  .hits::-webkit-scrollbar{display:none}
 }
 @media(max-width:560px){
-  .card{padding:10px;gap:7px;contain-intrinsic-size:auto 300px}
+  .card{padding:10px;gap:7px;contain-intrinsic-size:auto 330px}
   .works.lead{margin:-10px -10px 0}
   .b{font-size:10px;padding:2px 6px}
-  .hit{font-size:10px;padding:2px 6px}
   .meta{gap:10px;font-size:11px}
-  .open{padding:8px 12px}
-  .grid{padding:10px 12px 40px;gap:10px}
+  /* 狭幅は1列固定（minmax 350px のままだと 360px 端末で横はみ出し）＝画像も最大化 */
+  .grid{padding:10px 12px 40px;gap:10px;grid-template-columns:1fr}
 }
 /* ⚙絞り込みボタン（モバイルのみ・PCでは非表示） */
 #sheet-open{display:none;align-items:center;gap:5px;flex:none;font-size:13px;color:var(--txt);
@@ -196,7 +180,7 @@ body.sheet-open{overflow:hidden}
 #detail{position:fixed;inset:0;background:rgba(0,0,0,.66);z-index:70;padding:16px;overflow-y:auto;display:flex}
 #detail .dbox{background:var(--panel);border:1px solid var(--line);border-radius:16px;max-width:640px;width:100%;margin:auto;padding:22px 20px}
 #detail h2{margin:0;font-size:17px;display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
-#detail .dworks{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin:12px 0}
+#detail .dworks{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin:12px 0}
 #detail .dworks .thumb{width:100%;aspect-ratio:4/3}
 #detail .dbio{color:var(--mut);font-size:12.5px;line-height:1.7;white-space:pre-wrap;word-break:break-word;margin:10px 0;max-height:140px;overflow:auto}
 #detail .drow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:12px 0 0}
@@ -208,6 +192,52 @@ body.sheet-open{overflow:hidden}
 #detail .dclose:hover{color:var(--txt);border-color:var(--acc)}
 .detbtn{flex:none;font-size:12px;line-height:1;color:var(--mut);background:transparent;border:1px solid var(--line);border-radius:8px;padding:4px 8px;cursor:pointer;white-space:nowrap}
 .detbtn:hover{color:var(--acc);border-color:var(--acc)}
+/* 価格レンジスライダー（下限+上限・離散ステップ。native range 2本重ねの実証パターン） */
+.pricebox{display:flex;flex-direction:column;gap:6px;justify-content:center;background:var(--panel);
+  border:1px solid var(--line);border-radius:10px;padding:5px 14px 9px;min-width:230px}
+.pricebox .plabel{font-size:11px;color:var(--mut);display:flex;justify-content:space-between;gap:8px}
+.pricebox .plabel b{color:var(--acc);font-weight:600}
+.range2{position:relative;height:18px}
+.range2 .ptrack{position:absolute;left:0;right:0;top:7px;height:4px;border-radius:2px;background:var(--line)}
+.range2 .pfill{position:absolute;top:0;bottom:0;background:var(--acc);border-radius:2px}
+.range2 input[type=range]{position:absolute;left:0;right:0;top:0;width:100%;margin:0;height:18px;
+  -webkit-appearance:none;appearance:none;background:none;pointer-events:none;outline:none}
+.range2 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;pointer-events:auto;
+  width:16px;height:16px;border-radius:50%;background:var(--acc);border:2px solid #0e0f13;cursor:grab;box-shadow:0 0 0 1px var(--acc)}
+.range2 input[type=range]::-moz-range-thumb{pointer-events:auto;width:14px;height:14px;border-radius:50%;
+  background:var(--acc);border:2px solid #0e0f13;cursor:grab;box-shadow:0 0 0 1px var(--acc)}
+.range2 input[type=range]::-moz-range-track{background:none}
+/* Firefox は pointer-events:none の input 上で ::-moz-range-thumb の再有効化が効かない既知問題
+   → 上下半分ずつの当たり判定に分割（上=下限・下=上限）。他ブラウザは @supports で不適用 */
+@supports (-moz-appearance:none){
+  .range2 input[type=range]{pointer-events:auto;height:50%}
+  .range2 #p-min{top:0}
+  .range2 #p-max{top:auto;bottom:0}
+}
+#sheet-filters .pricebox{background:var(--panel2);min-height:56px}
+#sheet-filters .range2{height:26px}
+#sheet-filters .range2 .ptrack{top:11px}
+#sheet-filters .range2 input[type=range]{height:26px}
+#sheet-filters .range2 input[type=range]::-webkit-slider-thumb{width:22px;height:22px}
+#sheet-filters .range2 input[type=range]::-moz-range-thumb{width:20px;height:20px}
+/* 画像ライトボックス（作品サムネのクリック拡大。画像は Skeb CDN 参照のみ・再ホストなし） */
+#lb{position:fixed;inset:0;z-index:80;background:rgba(4,6,10,.85);display:flex;align-items:center;justify-content:center;padding:18px;cursor:zoom-out}
+#lb figure{margin:0;max-width:min(980px,94vw);display:flex;flex-direction:column;gap:10px}
+#lb img{max-width:100%;max-height:82vh;object-fit:contain;border-radius:12px;border:1px solid var(--line);background:var(--panel2);cursor:default}
+#lb figcaption{display:flex;gap:10px;align-items:center;justify-content:center;color:var(--mut);font-size:12.5px;flex-wrap:wrap}
+#lb figcaption a{color:var(--acc)}
+/* 🚫除外一覧ビュー: コレクション恒久除外（台帳からデータ削除済み）の行リスト */
+.permex{grid-column:1/-1;background:var(--panel);border:1px dashed var(--warn);border-radius:var(--r);padding:14px;font-size:12.5px;color:var(--mut)}
+.permex b{color:var(--txt)}
+.permex .pxrows{display:flex;flex-direction:column;gap:6px;margin-top:10px;max-height:340px;overflow-y:auto}
+.permex .pxrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;border-bottom:1px solid var(--line);padding:4px 0}
+.permex .pxrow a{color:var(--acc);text-decoration:none}
+.permex .pxrow a:hover{text-decoration:underline}
+.permex button{font-size:11px;background:var(--panel2);color:var(--txt);border:1px solid var(--line);border-radius:8px;padding:4px 9px;cursor:pointer}
+.permex button:hover{border-color:var(--acc);color:var(--acc)}
+/* 詳細ビューの絵師名リンク */
+#detail h2 .dname{color:inherit;text-decoration:none}
+#detail h2 .dname:hover{color:var(--acc);text-decoration:underline}
 /* gate */
 #gate{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:50;padding:20px}
 #gate .box{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:28px;max-width:340px;width:100%;text-align:center}
@@ -272,7 +302,7 @@ body.sheet-open{overflow:hidden}
     <div class="step"><span class="n">1</span><span><b>主対象（◎）を最優先</b> ＝「募集中」かつ「イラスト」かつ「VTuber適性が <b>確実 / 有力</b>」の絵師（カードが金枠）。</span></div>
     <div class="step"><span class="n">2</span><span>次に<b>受付状況</b>：募集中 → 受付不明 → 休止中。</span></div>
     <div class="step"><span class="n">3</span><span>同じなら<b>VTuber適性スコアの高い順</b>。</span></div>
-    <p>ほかに <b>新着順 / 価格 / VTuber適性 / 完了率 / 受注数 / 名前</b> で並び替えできます。</p>
+    <p>ほかに <b>新着順 / 価格 / 納期 / VTuber適性 / 完了率 / 受注数 / 名前</b> で並び替えできます。</p>
 
     <h3>VTuber適性ランクの意味</h3>
     <ul>
@@ -280,12 +310,13 @@ body.sheet-open{overflow:hidden}
       <li><span class="pill">有力</span> プロフィールに「VTuber / Live2D / 立ち絵 / キャラデザ」等の語</li>
       <li><span class="pill">候補</span> 弱い手がかりのみ</li>
     </ul>
-    <p>※「○○」の緑タグは、その絵師が描いた可能性の高い VTuber 名です。</p>
+    <p>※その絵師が描いた可能性の高い VTuber 名は 🔍詳細ビューで確認できます（検索枠に VTuber 名を入れて探すことも可能）。</p>
 
     <h3>絞り込み</h3>
     <ul>
       <li><b>募集中のみ</b>：いまリクエスト受付中だけ表示（既定）</li>
-      <li><b>価格</b>：「<b>〜◯円まで</b>」の予算上限で絞る（絵師のイラスト最低額が上限以下なら表示。価格不明の絵師は出ません）</li>
+      <li><b>価格</b>：スライダーで<b>下限〜上限</b>の予算範囲を指定（絵師のイラスト最低額が範囲内なら表示。範囲指定中は価格不明の絵師は出ません）</li>
+      <li><b>納期</b>：クリエイター設定の<b>納品期限</b>（リクエスト承認から◯日以内に納品）で絞る。平均実績ではなく本人設定の上限です。データは順次取得中のため、未取得の絵師は絞り込み中は表示されません</li>
       <li><b>VTuber適性</b>：「確実のみ / 有力以上 / 候補以上」で絞る</li>
       <li><b>状態</b>：選定ステータス（検討中/打診済/発注済/納品済/見送り）で絞る。⭐絞り込みと併用可。<b>特定の状態を選ぶと受付・価格などの他条件は無視</b>されます（発注済の絵師は受付停止しているのが普通のため）</li>
       <li><b>R-18サムネ表示</b>：オフで成人向け作品サムネをぼかす（既定オフ・安全側）。※R-18も受ける絵師も<b>一覧には常に表示</b>されます（SFW作品も描けるため。バッジで判別可）</li>
@@ -297,6 +328,9 @@ body.sheet-open{overflow:hidden}
     <h3>🚫 除外（合わない絵師を弾く）</h3>
     <p>カード右上の <b>🚫除外</b> を押すと、その絵師は<b>この端末で今すぐ非表示</b>になります。
     上に出る「<b>コレクションに反映</b>」のコマンドを巡回PCで実行すると、<b>今後も収集しません</b>。</p>
+    <p>上部バーの「<b>一覧を見る</b>」（スマホは⚙内の「🚫 除外一覧」）で除外済みを確認できます。
+    この端末の除外は<b>カード表示され「↩ 解除」でその場で戻せます</b>。コレクション恒久除外（反映済み）は
+    データ本体が削除済みのため @handle の行リスト表示となり、復帰は「復帰コマンド」を巡回PCで実行します。</p>
 
     <h3>⭐ お気に入り（3〜4人で共有）</h3>
     <p>カード右上の <b>⭐</b> を押すと、その絵師が<b>チーム全員の共有お気に入り</b>に入り、
@@ -325,17 +359,20 @@ body.sheet-open{overflow:hidden}
     </ul>
 
     <h3>データの鮮度</h3>
-    <p>受付状況・価格は<b>収集した時点</b>の情報です。各カードの「<b>確認 ○日前</b>」がその絵師の最終確認日、上部の「<b>データ更新 M/D</b>」が最新ビルド日です。募集は Skeb 側で急に締まることがあるため、発注前に「Skebで開く」で最新をご確認ください。</p>
+    <p>受付状況・価格は<b>収集した時点</b>の情報です。各カードの「<b>確認 ○日前</b>」がその絵師の最終確認日、上部の「<b>データ更新 M/D</b>」が最新ビルド日です。募集は Skeb 側で急に締まることがあるため、発注前に<b>絵師名をクリック</b>して Skeb の最新をご確認ください。</p>
 
     <h3>作品サムネ・発注</h3>
-    <p>カードの作品画像はクリックで Skeb の作品ページへ（画像は Skeb の参照表示）。
-    発注は「<b>Skebで開く</b>」から正規フローで。<b>社内専用</b>のため URL・パスワードの共有は控えてください。</p>
+    <p>カードの作品画像は<b>クリックで拡大表示</b>されます（画像は Skeb の参照表示）。拡大内の
+    「Skebで作品を開く」から作品ページへ。発注は<b>絵師名（または @handle）をクリック</b>して
+    Skeb の正規フローで。<b>社内専用</b>のため URL・パスワードの共有は控えてください。</p>
     <p>@handle 横の <b>𝕏</b> は Skeb 連携元の X アカウント（同名ハンドル）を開きます。
     X 側で改名・移転している場合はリンク切れになるため、その際は Skeb ページから最新のリンクをご確認ください。</p>
   </div>
 </div>
 
 <div id="detail" class="hidden"><div class="dbox" id="dbox"></div></div>
+
+<div id="lb" class="hidden"><figure><img id="lb-img" alt="作品拡大表示"><figcaption id="lb-cap"></figcaption></figure></div>
 
 <header class="hidden" id="hdr">
   <div class="brand">
@@ -352,14 +389,19 @@ body.sheet-open{overflow:hidden}
       <option value="stopped">休止中</option>
       <option value="unknown">受付不明</option>
     </select>
-    <select id="f-price">
-      <option value="">価格すべて</option>
-      <option value="3000">〜3千円</option>
-      <option value="5000">〜5千円</option>
-      <option value="10000">〜1万円</option>
-      <option value="30000">〜3万円</option>
-      <option value="50000">〜5万円</option>
-      <option value="100000">〜10万円</option>
+    <div class="pricebox" id="f-price-wrap" title="絵師のイラスト最低額（おまかせ最低額）の範囲で絞り込み">
+      <div class="plabel"><span>価格</span><b id="price-label">すべて</b></div>
+      <div class="range2">
+        <div class="ptrack"><div class="pfill" id="pfill"></div></div>
+        <input type="range" id="p-min" min="0" max="15" step="1" value="0" aria-label="価格下限">
+        <input type="range" id="p-max" min="0" max="16" step="1" value="16" aria-label="価格上限">
+      </div>
+    </div>
+    <select id="f-deadline" title="クリエイター設定の納品期限（リクエスト承認から◯日以内に納品）で絞り込み">
+      <option value="">納期すべて</option>
+      <option value="30">納期 〜30日</option>
+      <option value="60">納期 〜60日</option>
+      <option value="90">納期 〜90日</option>
     </select>
     <select id="f-tier">
       <option value="">VTuber適性すべて</option>
@@ -386,6 +428,7 @@ body.sheet-open{overflow:hidden}
       <option value="new">新着順</option>
       <option value="price-asc">価格 安い順</option>
       <option value="price-desc">価格 高い順</option>
+      <option value="deadline">納期 短い順</option>
       <option value="score">VTuber適性 高い順</option>
       <option value="complete">完了率 高い順</option>
       <option value="received">受注数 多い順</option>
@@ -406,7 +449,7 @@ body.sheet-open{overflow:hidden}
 <div id="stalewarn" class="hidden"></div>
 <div class="grid hidden" id="grid"></div>
 <div id="more-wrap" class="hidden"><button id="more-btn" type="button">もっと見る</button><div id="more-sentinel"></div></div>
-<footer class="hidden" id="ftr">ビルド: 2026-07-07T11:04:26 ／ 収録 4024 名 ／ 個人利用・社内非公開 ／ 画像は Skeb CDN 参照（再ホストなし）</footer>
+<footer class="hidden" id="ftr">ビルド: 2026-07-07T18:23:44 ／ 収録 4024 名 ／ 個人利用・社内非公開 ／ 画像は Skeb CDN 参照（再ホストなし）</footer>
 
 <nav class="btab hidden" id="btab">
   <button type="button" data-fav="" class="on"><span class="bt-ico">👥</span><span>すべて</span></button>
@@ -427,6 +470,7 @@ body.sheet-open{overflow:hidden}
         <button type="button" onclick="requestAddPrompt()">➕ 絵師を追加</button>
         <button type="button" onclick="loadFavsAndRender()">⭐ 更新</button>
         <button type="button" onclick="renameMe()" id="sheet-name">表示名</button>
+        <button type="button" onclick="toggleExView(true)">🚫 除外一覧</button>
         <button type="button" onclick="copyExcludeCmd()">🚫 コレクションに反映</button>
         <button type="button" onclick="unexcludeAll()">🚫 全解除</button>
       </div>
@@ -462,19 +506,41 @@ function unexcludeAll(){
   if(!confirm("端末の除外リストを全解除しますか？（コレクション側の除外は exclude.py で管理）")) return;
   EXCLUDED = new Set(); saveExcluded(EXCLUDED); render(); updateExbar();
 }
+function unexcludeOne(h){
+  EXCLUDED.delete(String(h).toLowerCase());
+  saveExcluded(EXCLUDED);
+  render({keep:true}); updateExbar();
+}
 async function copyExcludeCmd(){
   const cmd = "python exclude.py add " + [...EXCLUDED].join(" ");
   try{ await navigator.clipboard.writeText(cmd); alert("コピーしました:\n" + cmd); }
   catch(e){ prompt("このコマンドをコピーして実行してください:", cmd); }
 }
+async function copyText(cmd){
+  try{ await navigator.clipboard.writeText(cmd); alert("コピーしました:\n" + cmd); }
+  catch(e){ prompt("このコマンドをコピーして実行してください:", cmd); }
+}
+// ---- 🚫除外一覧ビュー（⭐一覧と同じ発想の専用ビュー。通常フィルタ・検索は無視） ----
+let EXVIEW = false;
+function toggleExView(on){
+  EXVIEW = !!on;
+  if(EXVIEW) closeSheet();
+  render(); updateExbar();
+  window.scrollTo(0, 0);
+}
 function updateExbar(){
   const bar = document.getElementById("exbar");
-  if(!EXCLUDED.size){ bar.classList.add("hidden"); return; }
+  const server = EXCLUDED_SERVER.size;
+  if(!EXCLUDED.size && !server && !EXVIEW){ bar.classList.add("hidden"); return; }
   bar.classList.remove("hidden");
-  bar.innerHTML = `🚫 除外中 <b>${EXCLUDED.size}</b> 名（この端末で非表示）`
-    + (LAST_EXCLUDED ? ` <button class="exundo" onclick="undoExclude()">↩ 元に戻す</button>` : "")
-    + ` <button onclick="copyExcludeCmd()" title="※「反映」したコマンドを巡回PCで実行すると今後も収集しません">コレクションに反映（コマンドをコピー）</button>`
-    + ` <button onclick="unexcludeAll()">全解除</button>`;
+  const shared = (EXCLUDED.size ? ` <button onclick="copyExcludeCmd()" title="※「反映」したコマンドを巡回PCで実行すると今後も収集しません">コレクションに反映（コマンドをコピー）</button>`
+    + ` <button onclick="unexcludeAll()">全解除</button>` : "");
+  bar.innerHTML = EXVIEW
+    ? `🚫 除外一覧（端末 <b>${EXCLUDED.size}</b> 名・コレクション <b>${server}</b> 名）`
+      + ` <button class="exview" onclick="toggleExView(false)">← 一覧へ戻る</button>` + shared
+    : `🚫 除外中 <b>${EXCLUDED.size}</b> 名（この端末で非表示）`
+      + (LAST_EXCLUDED ? ` <button class="exundo" onclick="undoExclude()">↩ 元に戻す</button>` : "")
+      + ` <button class="exview" onclick="toggleExView(true)">一覧を見る</button>` + shared;
 }
 
 // ---- お気に入り（⭐ を GAS+Sheet で 3〜4 人共有 / 誰が付けたか属性つき）----
@@ -642,7 +708,8 @@ async function requestAddPrompt(){
   if(hit){
     // 登録済み → フィルタを既定に緩めてカードを見せる（絞り込みで隠れていただけのケースも救済）
     document.getElementById("f-acc").value = "all";
-    document.getElementById("f-price").value = "";
+    resetPrice();
+    document.getElementById("f-deadline").value = "";
     document.getElementById("f-tier").value = "";
     const ff = document.getElementById("f-fav"); if(ff) ff.value = "";
     document.getElementById("f-rev").checked = true;
@@ -688,6 +755,7 @@ function openDetail(h){
   const meta = [];
   if (c.complete_rate != null) meta.push(`完了率 ${esc(c.complete_rate)}%`);
   if (c.received_count != null) meta.push(`受注 ${esc(c.received_count)}`);
+  if (c.deadline_days != null) meta.push(`<span title="クリエイター設定の納品期限（リクエスト承認から${esc(c.deadline_days)}日以内に納品）">納期 〜${esc(c.deadline_days)}日</span>`);
   if (c.genres?.length) meta.push(esc(c.genres.join("/")));
   if (c.last_checked){ const fa = daysAgoLabel(c.last_checked); if(fa) meta.push(`確認 ${fa}`); }
   const caps = (c.caps||[]).map(k => `<span class="b cap">${esc(k)}</span>`).join("");
@@ -695,7 +763,7 @@ function openDetail(h){
   const stOpts = ['<option value="">（状態なし）</option>']
     .concat(STATUSES.map(s => `<option value="${s}"${mt.status===s?" selected":""}>${s}</option>`)).join("");
   document.getElementById("dbox").innerHTML = `
-    <h2><span>${esc(c.name)} <a class="c-handle" href="${esc(c.url)}" target="_blank" rel="noopener noreferrer">@${esc(c.handle)}</a><a class="c-x" href="https://x.com/${esc(c.handle)}" target="_blank" rel="noopener noreferrer" title="Skeb連携元のXアカウント（同名）を開く">𝕏</a></span>
+    <h2><span><a class="dname" href="${esc(c.url)}" target="_blank" rel="noopener noreferrer" title="Skebページを開く">${esc(c.name)}</a> <a class="c-handle" href="${esc(c.url)}" target="_blank" rel="noopener noreferrer">@${esc(c.handle)}</a><a class="c-x" href="https://x.com/${esc(c.handle)}" target="_blank" rel="noopener noreferrer" title="Skeb連携元のXアカウント（同名）を開く">𝕏</a></span>
       <button class="dclose" onclick="closeDetail()">閉じる ✕</button></h2>
     <div class="c-price" style="margin-top:6px">${esc(price)}</div>
     ${(caps||hits)?`<div class="badges" style="margin-top:8px">${caps}${hits}</div>`:""}
@@ -707,8 +775,7 @@ function openDetail(h){
       <select id="d-status">${stOpts}</select>
       <button class="dsave" onclick="saveDetailMeta()">保存</button></div>
     <textarea id="d-note" maxlength="300" placeholder="チーム共有メモ（例: 立ち絵実績をXで確認済み／価格応相談とbioに記載）">${esc(mt.note||"")}</textarea>
-    <div class="dmsg" id="d-msg">${mt.name?`最終更新: ${esc(mt.name)}`:""}</div>`:""}
-    <a class="open" style="display:block;margin-top:10px" href="${esc(c.url)}" target="_blank" rel="noopener noreferrer">Skebで開く ↗</a>`;
+    <div class="dmsg" id="d-msg">${mt.name?`最終更新: ${esc(mt.name)}`:""}</div>`:""}`;
   document.getElementById("detail").classList.remove("hidden");
 }
 function detailDirty(){
@@ -762,7 +829,7 @@ async function loadAndRender(password){
   ALL.forEach(c => { c._hay = (c.name + " @" + c.handle + " " + (c.vtuber_hits||[]).join(" ") + " " + (c.bio||"")).toLowerCase(); });
   FAV = (data._meta && data._meta.fav) || null;   // ⭐共有の endpoint/secret（無ければ機能OFF）
   EXCLUDED_SERVER = new Set((data._meta && data._meta.excluded_handles) || []);
-  // 価格セレクトは静的な「上限累積型」（〜◯円まで）に変更済み。_meta.price_bands は未使用（互換で残置）。
+  // 価格はレンジスライダー（PRICE_STEPS の離散刻み）。_meta.price_bands は未使用（互換で残置）。
   document.getElementById("gate").classList.add("hidden");
   ["hdr","subrow","grid","ftr","btab"].forEach(id => document.getElementById(id).classList.remove("hidden"));
   const da = document.getElementById("dataage");
@@ -800,10 +867,61 @@ const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt
 function fmtDate(iso){ const t = Date.parse(iso); if(isNaN(t)) return ""; const d = new Date(t); return (d.getMonth()+1) + "/" + d.getDate(); }
 function daysAgoLabel(iso){ const t = Date.parse(iso); if(isNaN(t)) return ""; const n = Math.floor((Date.now()-t)/86400000); return n<=0?"今日":(n===1?"昨日":n+"日前"); }
 
+// ---- 価格レンジスライダー（下限+上限・離散ステップ） ----
+const PRICE_STEPS = [0,1000,3000,5000,7000,10000,15000,20000,25000,30000,40000,50000,70000,100000,150000,200000,null];  // null=上限なし
+const PMAX_IDX = PRICE_STEPS.length - 1;
+function priceStepLabel(i){
+  const v = PRICE_STEPS[i];
+  if (v == null) return "上限なし";
+  if (v < 10000) return (v/1000) + "千円";
+  return (v/10000) + "万円";
+}
+function priceBounds(){
+  const lo = +document.getElementById("p-min").value;
+  const hi = +document.getElementById("p-max").value;
+  return {min: PRICE_STEPS[lo] || 0, max: PRICE_STEPS[hi], active: lo > 0 || hi < PMAX_IDX};  // max null=上限なし
+}
+function updatePriceUI(from){
+  const mn = document.getElementById("p-min"), mx = document.getElementById("p-max");
+  let lo = +mn.value, hi = +mx.value;
+  if (lo > hi){  // ハンドル交差はドラッグ中の側を優先して他方を押す
+    if (from === "min"){ hi = lo; mx.value = hi; } else { lo = hi; mn.value = lo; }
+  }
+  const lab = document.getElementById("price-label");
+  lab.textContent = (lo === 0 && hi === PMAX_IDX) ? "すべて"
+    : (lo === 0 ? `〜${priceStepLabel(hi)}`
+    : (hi === PMAX_IDX ? `${priceStepLabel(lo)}〜` : `${priceStepLabel(lo)}〜${priceStepLabel(hi)}`));
+  const fill = document.getElementById("pfill");
+  fill.style.left = (lo / PMAX_IDX * 100) + "%";
+  fill.style.right = (100 - hi / PMAX_IDX * 100) + "%";
+}
+function resetPrice(){
+  document.getElementById("p-min").value = 0;
+  document.getElementById("p-max").value = PMAX_IDX;
+  updatePriceUI();
+}
+let priceTimer = null;
+function bindPriceSlider(){
+  [["p-min","min"],["p-max","max"]].forEach(([id, side]) => {
+    document.getElementById(id).addEventListener("input", () => {
+      updatePriceUI(side);
+      clearTimeout(priceTimer);
+      priceTimer = setTimeout(() => { EXVIEW = false; render(); updateExbar(); }, 150);
+    });
+  });
+  updatePriceUI();
+}
+
 function filtered(){
+  // 🚫除外一覧ビュー: この端末で除外した絵師だけ表示（通常フィルタ・検索は無視。名前順）
+  if (EXVIEW){
+    return ALL.filter(c => EXCLUDED.has(String(c.handle).toLowerCase()))
+      .sort((a,b) => a.name.localeCompare(b.name, "ja"));
+  }
   const q = document.getElementById("q").value.trim().toLowerCase();
   const acc = document.getElementById("f-acc").value;
-  const price = document.getElementById("f-price").value;
+  const pb = priceBounds();
+  const dl = document.getElementById("f-deadline").value;
   const tier = document.getElementById("f-tier").value;
   const revOk = document.getElementById("f-rev").checked;
   const favMode = FAV ? document.getElementById("f-fav").value : "";
@@ -821,9 +939,15 @@ function filtered(){
     const pipelineView = fst && fst !== "none";
     if (!favMode && !pipelineView){  // ⭐絞り込み中は受付/価格/適性/要目視を無視（お気に入りを見失わない）
       if (acc !== "all" && c.accepting !== acc) return false;
-      // 価格は「上限累積型」: 絵師のイラスト最低額が選択上限以下なら表示（実務の予算は
-      // 「ちょうど1万〜3万」でなく「上限X円」のため。価格不明は予算判定できず除外）
-      if (price && !(typeof c.price_illust === "number" && c.price_illust <= +price)) return false;
+      // 価格はレンジ指定: 絵師のイラスト最低額（おまかせ最低額）が [下限, 上限] 内なら表示。
+      // 範囲を指定した場合、価格不明は予算判定できず除外（従来の上限型と同じ扱い）
+      if (pb.active){
+        if (typeof c.price_illust !== "number") return false;
+        if (c.price_illust < pb.min) return false;
+        if (pb.max != null && c.price_illust > pb.max) return false;
+      }
+      // 納期（納品期限・クリエイター設定値）: 上限日数以下のみ。未取得（バックフィル前）は判定不能で除外
+      if (dl && !(typeof c.deadline_days === "number" && c.deadline_days <= +dl)) return false;
       if (tier){  // 適性も累積型（有力以上＝確実+有力）
         const t = c.vtuber_tier;
         if (tier === "確実" && t !== "確実") return false;
@@ -844,6 +968,7 @@ function filtered(){
     "new": (a,b) => String(b.first_seen||"").localeCompare(String(a.first_seen||"")),
     "price-asc": (a,b) => (a.price_illust??1e12)-(b.price_illust??1e12),
     "price-desc": (a,b) => (b.price_illust??-1)-(a.price_illust??-1),
+    "deadline": (a,b) => (a.deadline_days??1e9)-(b.deadline_days??1e9),
     "score": (a,b) => (b.vtuber_score||0)-(a.vtuber_score||0),
     "complete": (a,b) => (b.complete_rate??-1)-(a.complete_rate??-1),
     "received": (a,b) => (b.received_count??-1)-(a.received_count??-1),
@@ -858,10 +983,11 @@ function workHtml(w, i, nsfwShown, eager){
   if (w.thumb){
     const nsfw = (w.nsfw && !nsfwShown) ? " nsfw" : "";
     const load = eager ? `fetchpriority="high" decoding="async"` : `loading="lazy" decoding="async"`;
-    return `<a class="thumb${nsfw}" href="${esc(w.url)}" target="_blank" rel="noopener noreferrer">`
+    // data-lb: クリックで遷移せずライトボックス拡大（委譲リスナー）。Skeb作品ページへは拡大内リンクから
+    return `<a class="thumb${nsfw}" href="${esc(w.url)}" target="_blank" rel="noopener noreferrer" data-lb="${esc(w.thumb)}"${w.nsfw?` data-nsfw="1"`:""} title="クリックで拡大">`
       + `<img ${load} referrerpolicy="no-referrer" src="${esc(w.thumb)}" alt="作品${i+1}"`
       + ` onerror="this.closest('.thumb').classList.add('fail');this.remove();">`
-      + `<span class="tlink">作品${i+1}↗</span></a>`;
+      + `<span class="tlink">作品${i+1}</span></a>`;
   }
   return `<a class="work" href="${esc(w.url)}" target="_blank" rel="noopener noreferrer">作品${i+1}↗</a>`;
 }
@@ -886,11 +1012,10 @@ function card(c, nsfwShown, idx){
   const price = c.price_band
     ? `<div class="c-price">${esc(c.price_band)}${c.price_illust?`（¥${Number(c.price_illust).toLocaleString()}〜）`:""}</div>` : "";
 
-  const hitsAll = (c.vtuber_hits||[]);
-  const hits = hitsAll.slice(0,6).map(h => `<span class="hit" data-hit="${esc(h)}">${esc(h)}</span>`).join("");
   const meta = [];
   if (c.complete_rate != null) meta.push(`完了率 ${esc(c.complete_rate)}%`);
   if (c.received_count != null) meta.push(`受注 ${esc(c.received_count)}`);
+  if (c.deadline_days != null) meta.push(`<span title="クリエイター設定の納品期限（リクエスト承認から${esc(c.deadline_days)}日以内に納品）">納期 〜${esc(c.deadline_days)}日</span>`);
   if (c.genres?.length) meta.push(esc(c.genres.join("/")));
   if (c.last_checked){ const fa = daysAgoLabel(c.last_checked); if(fa) meta.push(`確認 ${fa}`); }
   if (mt.note) meta.push(`<span title="${esc(mt.note)}">📝メモ</span>`);
@@ -903,26 +1028,29 @@ function card(c, nsfwShown, idx){
   const worksLead = hasThumb ? `<div class="works lead">${works}</div>` : "";
   const worksBottom = (!hasThumb && works) ? `<div class="works">${works}</div>` : "";
 
+  // 除外一覧ビューでは 🚫 が「↩ 解除」になる（通常ビューでは除外済みカードは描画されない）
+  const isEx = EXCLUDED.has(String(c.handle).toLowerCase());
+  const exBtn = isEx
+    ? `<button class="exbtn" onclick="unexcludeOne('${esc(c.handle)}')" title="この端末の除外を解除して一覧に戻す">↩ 解除</button>`
+    : `<button class="exbtn" onclick="excludeHandle('${esc(c.handle)}')" title="この絵師を一覧から外し、今後も収集しない">🚫 除外</button>`;
   return `<div class="card ${c.is_prime_target?"prime":""}">
     ${worksLead}
     <div class="c-head">
       <div>
-        <div class="c-name">${esc(c.name)}</div>
+        <a class="c-name" href="${esc(c.url)}" target="_blank" rel="noopener noreferrer" title="Skebページを開く">${esc(c.name)}</a>
         <a class="c-handle" href="${esc(c.url)}" target="_blank" rel="noopener noreferrer">@${esc(c.handle)}</a><a class="c-x" href="https://x.com/${esc(c.handle)}" target="_blank" rel="noopener noreferrer" title="Skeb連携元のXアカウント（同名）を開く">𝕏</a>
         ${price}
       </div>
       <div class="c-actions">
         <button class="detbtn" data-h="${esc(favKey(c.handle))}" title="詳細（作品最大6枚・選定ステータス・共有メモ）">🔍</button>
         ${favBtnHtml(c)}
-        <button class="exbtn" onclick="excludeHandle('${esc(c.handle)}')" title="この絵師を一覧から外し、今後も収集しない">🚫 除外</button>
+        ${exBtn}
       </div>
     </div>
     <div class="badges">${badges.join("")}</div>
-    ${hits?`<div class="hits" title="${esc(hitsAll.join("・"))}">${hits}</div>`:""}
     ${meta.length?`<div class="meta">${meta.map(m=>`<span>${m}</span>`).join("")}</div>`:""}
     ${worksBottom}
     ${c.needs_review?`<div class="reason">${esc(c.reason||"")}</div>`:""}
-    <a class="open" href="${esc(c.url)}" target="_blank" rel="noopener noreferrer">Skebで開く ↗</a>
   </div>`;
 }
 
@@ -931,16 +1059,39 @@ const PAGE = 60;
 let VIEW = [];        // filtered() の結果（描画対象の全量）
 let SHOWN = PAGE;     // いま DOM に出している件数
 
+// コレクション恒久除外（excluded.yml 反映済み）: 台帳からデータ削除済みのため行リスト表示
+function permexHtml(){
+  if (!EXCLUDED_SERVER.size) return "";
+  const rows = [...EXCLUDED_SERVER].sort().map(h => {
+    const also = EXCLUDED.has(h) ? `<span class="reason">（この端末でも除外中）</span>` : "";
+    return `<div class="pxrow"><a href="https://skeb.jp/@${esc(h)}" target="_blank" rel="noopener noreferrer">@${esc(h)}</a>${also}
+      <button onclick="copyText('python exclude.py remove ${esc(h)}')" title="巡回PCで実行すると収集・掲載が復活します">復帰コマンド</button></div>`;
+  }).join("");
+  return `<div class="permex"><b>コレクション恒久除外（${EXCLUDED_SERVER.size} 名）</b>
+    <div style="margin-top:4px">excluded.yml に反映済み＝収集対象外。データ本体は台帳から削除済みのためカード表示はできません。
+    復帰したい場合は「復帰コマンド」を巡回PCで実行してください（次回ビルドから収集・掲載が再開されます）。</div>
+    <div class="pxrows">${rows}</div></div>`;
+}
+
 function render(opts){
   const keep = !!(opts && opts.keep);   // ⭐トグル等では表示件数・スクロール位置を保つ
   VIEW = filtered();
   if(!keep) SHOWN = PAGE;
+  if(EXVIEW) SHOWN = Math.max(VIEW.length, PAGE);   // 除外一覧は段階描画なしで全量表示
   SHOWN = Math.min(Math.max(SHOWN, PAGE), Math.max(VIEW.length, PAGE));
   const nsfwShown = document.getElementById("f-nsfw").checked;
-  document.getElementById("grid").innerHTML = VIEW.slice(0, SHOWN).map((c,i) => card(c, nsfwShown, i)).join("") ||
-    `<div class="reason" style="padding:20px">該当する絵師がいません（フィルタを緩めてください）</div>`;
-  const prime = VIEW.filter(c => c.is_prime_target).length;
-  document.getElementById("count").textContent = `${VIEW.length} 名表示（主対象 ${prime}）／ 全 ${ALL.length} 名`;
+  let html = VIEW.slice(0, SHOWN).map((c,i) => card(c, nsfwShown, i)).join("");
+  if (EXVIEW){
+    if (!html) html = `<div class="reason" style="padding:20px">この端末で除外した絵師はいません</div>`;
+    html += permexHtml();
+    document.getElementById("count").textContent =
+      `🚫 除外一覧: この端末 ${VIEW.length} 名・コレクション恒久除外 ${EXCLUDED_SERVER.size} 名`;
+  } else {
+    if (!html) html = `<div class="reason" style="padding:20px">該当する絵師がいません（フィルタを緩めてください）</div>`;
+    const prime = VIEW.filter(c => c.is_prime_target).length;
+    document.getElementById("count").textContent = `${VIEW.length} 名表示（主対象 ${prime}）／ 全 ${ALL.length} 名`;
+  }
+  document.getElementById("grid").innerHTML = html;
   document.getElementById("more-wrap").classList.toggle("hidden", VIEW.length <= SHOWN);
   const apply = document.getElementById("sheet-apply");
   if(apply) apply.textContent = `${VIEW.length} 名を表示`;
@@ -966,13 +1117,14 @@ function updateBtab(){
 }
 
 // ---- ⚙バッジ: 既定値から変更されているフィルタ数 ----
-const FILTER_DEFAULTS = {"f-acc":"accepting","f-price":"","f-tier":"","f-fav":"","f-status":"","f-sort":"reco"};
+const FILTER_DEFAULTS = {"f-acc":"accepting","f-deadline":"","f-tier":"","f-fav":"","f-status":"","f-sort":"reco"};
 function updateSheetBadge(){
   let n = 0;
   for(const [id, def] of Object.entries(FILTER_DEFAULTS)){
     const el = document.getElementById(id);
     if(el && el.value !== def) n++;
   }
+  if(priceBounds().active) n++;
   if(document.getElementById("f-nsfw").checked) n++;
   if(!document.getElementById("f-rev").checked) n++;
   document.getElementById("sheet-badge").textContent = n ? String(n) : "";
@@ -982,20 +1134,22 @@ function bindControls(){
   // 検索はデバウンス（1キーごとの全件フィルタ＋全置換によるタイプ中フリーズを解消）
   let qTimer = null;
   document.getElementById("q").addEventListener("input", () => {
-    clearTimeout(qTimer); qTimer = setTimeout(() => render(), 150);
+    clearTimeout(qTimer); qTimer = setTimeout(() => { EXVIEW = false; render(); updateExbar(); }, 150);
   });
-  ["f-acc","f-price","f-tier","f-sort","f-nsfw","f-rev"].forEach(id => {
-    document.getElementById(id).addEventListener("change", () => render());
+  // フィルタ操作は🚫除外一覧ビューを抜けて通常一覧へ（除外一覧は通常フィルタを無視する専用ビュー）
+  ["f-acc","f-deadline","f-tier","f-sort","f-nsfw","f-rev"].forEach(id => {
+    document.getElementById(id).addEventListener("change", () => { EXVIEW = false; render(); updateExbar(); });
   });
+  bindPriceSlider();
   const ff = document.getElementById("f-fav");
   if(ff){
     if(!FAV){ ff.style.display = "none"; }        // 共有未設定なら ⭐絞り込みは隠す
-    else { ff.addEventListener("change", loadFavsAndRender); }  // 最新の共有状態へ同期して再描画
+    else { ff.addEventListener("change", () => { EXVIEW = false; updateExbar(); loadFavsAndRender(); }); }  // 最新の共有状態へ同期して再描画
   }
   const fs = document.getElementById("f-status");
   if(fs){
     if(!FAV){ fs.style.display = "none"; }        // ステータスはGAS共有依存＝未設定なら隠す
-    else { fs.addEventListener("change", loadFavsAndRender); }  // 他メンバーの最新状態へ同期（⭐と同じ流儀）
+    else { fs.addEventListener("change", () => { EXVIEW = false; updateExbar(); loadFavsAndRender(); }); }  // 他メンバーの最新状態へ同期（⭐と同じ流儀）
   }
   // コンパクト表示（PC）
   document.getElementById("f-compact").addEventListener("change", e => {
@@ -1008,19 +1162,22 @@ function bindControls(){
     new IntersectionObserver(es => { if(es.some(e => e.isIntersecting)) showMore(); },
       {rootMargin: "600px"}).observe(document.getElementById("more-sentinel"));
   }
-  // 緑タグタップ→検索 / 🔍→詳細ビュー（委譲リスナー。onclick属性へのJS文字列埋込を増やさない）
+  // 🔍→詳細ビュー（委譲リスナー。onclick属性へのJS文字列埋込を増やさない）
   document.getElementById("grid").addEventListener("click", e => {
     const det = e.target.closest(".detbtn");
-    if(det){ e.preventDefault(); openDetail(det.dataset.h); return; }
-    const hit = e.target.closest(".hit");
-    if(!hit) return;
+    if(det){ e.preventDefault(); openDetail(det.dataset.h); }
+  });
+  // 作品サムネ→ライトボックス拡大（カード/詳細ビュー共通。修飾キー・中クリックは既定動作＝別タブ）
+  document.addEventListener("click", e => {
+    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    const t = e.target.closest(".thumb[data-lb]");
+    if (!t || t.classList.contains("fail")) return;
     e.preventDefault();
-    document.getElementById("q").value = hit.dataset.hit || hit.textContent;
-    render();
-    window.scrollTo({top: 0});
+    openLightbox(t.dataset.lb, t.getAttribute("href"), t.dataset.nsfw === "1");
   });
   // 下部タブバー
   document.querySelectorAll("#btab [data-fav]").forEach(b => b.addEventListener("click", () => {
+    EXVIEW = false; updateExbar();
     const ff2 = document.getElementById("f-fav");
     if(ff2){ ff2.value = b.dataset.fav; }
     if(b.dataset.fav && FAV){ loadFavsAndRender(); } else { render(); }
@@ -1038,7 +1195,7 @@ function bindControls(){
 
 // ---- 絞り込みボトムシート（フィルタUIをモバイルではシートへ移設・刀剣listingの実証パターン） ----
 const MQ_MOBILE = window.matchMedia("(max-width:768px)");
-const SHEET_FIELD_IDS = ["f-acc","f-price","f-tier","f-fav","f-status","f-sort"];
+const SHEET_FIELD_IDS = ["f-acc","f-price-wrap","f-deadline","f-tier","f-fav","f-status","f-sort"];
 let SHEET_MOVED = null;   // [{el, ph}] 原位置復元用プレースホルダ
 let SHEET_HIDE_TIMER = null;
 function sheetMoveIn(){
@@ -1085,6 +1242,26 @@ MQ_MOBILE.addEventListener("change", restoreIfDesktop);
 // matchMedia の change はエミュレーション環境等で発火しないことがあるため resize でも冗長化
 window.addEventListener("resize", restoreIfDesktop);
 
+// ---- 画像ライトボックス（作品サムネのクリック拡大。R-18 は元々検閲済みサムネURLのみ保持） ----
+function openLightbox(src, url, nsfw){
+  const img = document.getElementById("lb-img");
+  img.src = src;
+  // セーフモード（R-18サムネ表示オフ）ではカードと同じくぼかす（URL自体は検閲済みアセットだが
+  // 拡大で無ぼかしになるとセーフモードの期待を裏切る。2026-07-07 レビュー指摘）
+  img.style.filter = (nsfw && !document.getElementById("f-nsfw").checked) ? "blur(26px)" : "";
+  document.getElementById("lb-cap").innerHTML =
+    (nsfw ? `<span class="b r18">R-18</span>` : "")
+    + `<a href="${esc(url)}" target="_blank" rel="noopener noreferrer">Skebで作品を開く ↗</a>`;
+  document.getElementById("lb").classList.remove("hidden");
+}
+function closeLightbox(){
+  const lb = document.getElementById("lb");
+  if (lb.classList.contains("hidden")) return;
+  lb.classList.add("hidden");
+  document.getElementById("lb-img").removeAttribute("src");
+}
+document.getElementById("lb").addEventListener("click", e => { if(!e.target.closest("a")) closeLightbox(); });
+
 // ---- gate ----
 let UNLOCK_BUSY = false;   // 二重解錠ガード（ダブルクリック/Enter+クリック/自動解錠との競合で
                             // loadAndRender→bindControls が2回走るとリスナーが重複登録される）
@@ -1119,7 +1296,10 @@ document.getElementById("help-close").addEventListener("click", () => toggleHelp
 document.getElementById("help").addEventListener("click", e => { if(e.target.id === "help") toggleHelp(false); });
 document.getElementById("detail").addEventListener("click", e => { if(e.target.id === "detail") closeDetail(); });
 // isComposing ガード: 日本語IMEの変換キャンセル（Esc）でモーダルごと閉じてメモ下書きを失わない
-document.addEventListener("keydown", e => { if(e.key === "Escape" && !e.isComposing){ toggleHelp(false); closeSheet(); closeDetail(); } });
+document.addEventListener("keydown", e => { if(e.key === "Escape" && !e.isComposing){
+  const lb = document.getElementById("lb");
+  if(!lb.classList.contains("hidden")){ closeLightbox(); return; }  // 拡大表示中は拡大だけ閉じる
+  toggleHelp(false); closeSheet(); closeDetail(); } });
 window.addEventListener("DOMContentLoaded", () => {
   const saved = localStorage.getItem("skeb_pw");
   if (saved) tryUnlock(saved);
