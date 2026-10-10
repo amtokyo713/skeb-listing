@@ -1,0 +1,9 @@
+{
+  "name": "skeb-finder（社内）",
+  "short_name": "skeb-finder",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0e0f13",
+  "theme_color": "#0e0f13",
+  "icons": []
+}
